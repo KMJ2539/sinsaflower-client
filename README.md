@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌼 신사플라워 (SinsaFlower Client)
 
-## Getting Started
+Next.js 기반으로 제작한 온라인 꽃집 플랫폼입니다.
+발주, 수주, 정산관리 흐름을 제공하며 반응형 UI와 SEO 최적화를 목표로 개발되었습니다.
 
-First, run the development server:
+## 1. 기술 스택
+
+| 범주                | 사용 기술                            |
+| ------------------- | ------------------------------------ |
+| **프레임워크**      | Next.js 15, React 19                 |
+| **언어**            | TypeScript 5                         |
+| **스타일링**        | TailwindCSS 3, PostCSS, Autoprefixer |
+| **HTTP 통신**       | Axios                                |
+| **폼 관리**         | React Hook Form 7                    |
+| **유틸리티**        | clsx                                 |
+| **기타 라이브러리** | react-daum-postcode (주소 검색)      |
+| **린팅/품질**       | ESLint 9, eslint-config-next         |
+| **패키지 매니저**   | Yarn 4 (Berry)                       |
+
+## 2. 브랜치 전략
+
+### 기본 브랜치
+
+| 브랜치명 | 설명                  |
+| -------- | --------------------- |
+| main     | 운영(배포) 브랜치     |
+| develop  | 기능 개발 통합 브랜치 |
+
+### 단계별 브랜치
+
+| 브랜치명   | 설명                |
+| ---------- | ------------------- |
+| phase/dev  | 전체 기능 구현 단계 |
+| phase/test | QA 및 테스트 단계   |
+| phase/seo  | SEO 및 최적화 단계  |
+
+## 3. 폴더 구조
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+src/
+├── app/                 # Next.js App Router
+├── features/            # 기능 단위 모듈
+├── shared/              # 컴포넌트, 훅, lib 등 공통
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 4. 주요 기능
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+🌸 회원 관리 (신청/승인)
+🛒 수주/발주
+💳 정산 관리
+📱 반응형 UI 및 SEO 최적화
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+5. 실행 방법
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+yarn install
+yarn dev
+```
