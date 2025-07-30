@@ -1,0 +1,57 @@
+.container {
+  @apply p-4;
+}
+
+.actions {
+  @apply flex gap-4 mb-4;
+}
+
+.actionBtn {
+  @apply inline-block w-24 bg-gray-300 py-0.5 rounded text-sm text-center mb-1;
+}
+
+.actionBtn.delete {
+  @apply bg-red-500 hover:bg-red-600 text-white;
+}
+
+.table {
+  @apply w-full border border-gray-200 text-sm;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  @apply border border-gray-200 p-1 text-center;
+}
+
+.table th {
+  @apply bg-gray-100 font-medium;
+}
+
+.table tbody tr:hover {
+  @apply bg-gray-50;
+}
+
+.checkbox {
+  @apply w-4 h-4;
+}
+
+.priceInput {
+  @apply w-16 p-1 border border-gray-300 rounded text-center text-sm;
+}
+
+.priceInput:focus {
+  @apply outline-none border-blue-500 ring-1 ring-blue-500;
+}
+
+.regionCell {
+  @apply font-medium text-gray-700;
+}
+
+.deleteBtn {
+  @apply px-2 py-1 bg-red-500 text-white border-none rounded text-xs cursor-pointer;
+}
+
+.deleteBtn:hover {
+  @apply bg-red-600;
+}

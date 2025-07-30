@@ -1,0 +1,90 @@
+.regionSelector {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.section {
+  flex: 1;
+}
+
+.sectionTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+
+.sidoGrid,
+.sigunguGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.regionButton {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: #f9fafb;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-align: center;
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.regionButton:hover {
+  background-color: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.regionButton.selected {
+  @apply bg-primary text-white border-primary;
+}
+
+.regionButton.selected:hover {
+  @apply bg-primary;
+}
+
+/* 스크롤바 스타일링 */
+.sidoGrid::-webkit-scrollbar,
+.sigunguGrid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidoGrid::-webkit-scrollbar-track,
+.sigunguGrid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.sidoGrid::-webkit-scrollbar-thumb,
+.sigunguGrid::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.sidoGrid::-webkit-scrollbar-thumb:hover,
+.sigunguGrid::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .regionSelector {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .sidoGrid,
+  .sigunguGrid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+}
