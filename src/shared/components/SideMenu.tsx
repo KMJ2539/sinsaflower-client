@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getUser } from "@/features/auth/services/auth.service";
+import { getUser } from "@/features/auth/services/auth.server";
 import { formatCurrency } from "../utils/format";
 
 const SideMenu = async () => {
@@ -63,32 +63,32 @@ const SideMenu = async () => {
         <h3 className="font-semibold text-md mb-2 border-b pb-1">주문관리</h3>
         <ul className="space-y-1 text-sm">
           <li>
-            <Link href="/member-search" className="hover:underline">
+            <Link href="/members" className="hover:underline">
               회원검색
             </Link>
           </li>
           <li>
-            <Link href="/order-form" className="hover:underline text-left">
+            <Link href="/orders/create" className="hover:underline text-left">
               발주
             </Link>
           </li>
           <li>
-            <Link href="/all-orders" className="hover:underline">
+            <Link href="/orders/purchase" className="hover:underline">
               전체발주리스트
             </Link>
           </li>
           <li>
-            <Link href="/all-received-orders" className="hover:underline">
+            <Link href="/orders/sales" className="hover:underline">
               전체수주리스트
             </Link>
           </li>
           <li>
-            <Link href="/unconfirmed-orders" className="hover:underline">
+            <Link href="/orders/pending" className="hover:underline">
               미확인주문리스트
             </Link>
           </li>
           <li>
-            <Link href="/canceled-orders" className="hover:underline">
+            <Link href="/orders/canceled" className="hover:underline">
               취소주문리스트
             </Link>
           </li>
@@ -96,7 +96,7 @@ const SideMenu = async () => {
       </div>
 
       {/* 게시판 메뉴 */}
-      <div className="bg-white p-4 rounded shadow">
+      {/* <div className="bg-white p-4 rounded shadow">
         <h3 className="font-semibold text-md mb-2 border-b pb-1">게시판</h3>
         <ul className="space-y-1 text-sm">
           <li>
@@ -110,7 +110,7 @@ const SideMenu = async () => {
             </Link>
           </li>
         </ul>
-      </div>
+      </div> */}
 
       {/* 정산관리 메뉴 */}
       <div className="bg-white p-4 rounded shadow">
@@ -140,41 +140,41 @@ const SideMenu = async () => {
       </div>
 
       {/* 관리자 메뉴 - 관리자만 표시
-                {isAdmin && (
-                  <div className="bg-red-50 p-2 rounded shadow-sm border border-red-200">
-                    <h3 className="font-semibold text-xs border-b border-red-200 pb-1 mb-1 text-red-700">
-                      관리자
-                    </h3>
-                    <ul className="space-y-0.5 text-xs">
-                      <li>
-                        <Link
-                          href="/admin-dashboard"
-                          className="hover:underline text-left"
-                        >
-                          회원 승인 관리
-                        </Link>
-                      </li>
-                      <li>
-                        <a
-                          href="/admin-member-approval"
-                          className="hover:underline"
-                        >
-                          회원 승인
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#" className="hover:underline text-red-600">
-                          주문 관리
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#" className="hover:underline text-red-600">
-                          시스템 설정
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                )} */}
+      {isAdmin && (
+        <div className="bg-red-50 p-2 rounded shadow-sm border border-red-200">
+          <h3 className="font-semibold text-xs border-b border-red-200 pb-1 mb-1 text-red-700">
+            관리자
+          </h3>
+          <ul className="space-y-0.5 text-xs">
+            <li>
+              <Link
+                href="/admin-dashboard"
+                className="hover:underline text-left"
+              >
+                회원 승인 관리
+              </Link>
+            </li>
+            <li>
+              <a
+                href="/admin-member-approval"
+                className="hover:underline"
+              >
+                회원 승인
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline text-red-600">
+                주문 관리
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline text-red-600">
+                시스템 설정
+              </a>
+            </li>
+          </ul>
+        </div>
+      )} */}
     </aside>
   );
 };

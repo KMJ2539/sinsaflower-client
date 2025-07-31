@@ -1,5 +1,5 @@
 import { AuthProvider } from "@/shared/context/auth.context";
-import { getUser } from "@/features/auth/services/auth.service";
+import { getUser } from "@/features/auth/services/auth.server";
 import Header from "@/shared/components/Header";
 import SideMenu from "@/shared/components/SideMenu";
 
