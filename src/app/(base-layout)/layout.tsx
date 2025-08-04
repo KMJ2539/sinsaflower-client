@@ -32,7 +32,7 @@ export default async function RootLayout({
 
       {/* Footer */}
       <footer className="mt-6 text-center text-xs text-gray-500 p-2">
-        &copy; 2025 꽃비파트너스. All rights reserved.
+        &copy; 2025 신사플라워. All rights reserved.
       </footer>
     </div>
   );

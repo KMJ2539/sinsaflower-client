@@ -4,6 +4,10 @@ import { Button } from "@/shared/components/ui/Button";
 import { useForm } from "react-hook-form";
 import BasicInfoFields from "./fields/BasicInfoFields";
 import ProductFields from "./fields/ProductFields";
+import "@/shared/styles/table.css";
+import DeliveryFields from "./fields/DeliveryFields";
+import MessageFields from "./fields/MessageFields";
+import AdditionalInfoFields from "./fields/AdditionalInfoFields";
 
 export type OrderFormValues = {
   specialNote?: string;
@@ -14,6 +18,7 @@ export type OrderFormValues = {
   productName: string;
   productDetail?: string;
   quantity: number;
+  originPrice: number;
   price: number;
   payment: number;
   image?: File;
@@ -26,13 +31,31 @@ export type OrderFormValues = {
   deliveryDate: string;
   deliveryTime: string;
   deliveryPlace: string;
-  message: string;
+  messages: { text: string }[];
   senderList: { name: string; card?: string; note?: string }[];
+  options?: {
+    [key: string]: {
+      checked: boolean;
+      price: number;
+    };
+  };
+  card: string;
+  request: string;
+  hideDeliveryPhoto: boolean;
 };
 
 const OrderForm = () => {
-  const { register, handleSubmit, setValue, watch, control } =
-    useForm<OrderFormValues>();
+  const { register, handleSubmit, setValue, watch, control, getValues } =
+    useForm<OrderFormValues>({
+      defaultValues: {
+        originPrice: 0,
+        price: 0,
+        payment: 0,
+        quantity: 1,
+        senderList: [{}],
+        messages: [{}],
+      },
+    });
 
   const onSubmit = (data: OrderFormValues) => {
     console.log("폼 제출:", data);
@@ -43,13 +66,22 @@ const OrderForm = () => {
       <div className="grid grid-cols-2 gap-4"></div>
 
       <table className="w-full border-t border-r border-collapse text-xs">
-        <BasicInfoFields register={register} />
-        <ProductFields register={register} setValue={setValue} watch={watch} />
-        {/*<PaymentFields register={register} />
-        <ReceiverFields register={register} />
-        <DeliveryFields register={register} />
-        <MessageFields register={register} />
-        <SenderFields register={register} control={control} /> */}
+        <tbody>
+          <BasicInfoFields register={register} />
+          <ProductFields
+            register={register}
+            setValue={setValue}
+            watch={watch}
+          />
+          <DeliveryFields register={register} />
+          <MessageFields
+            register={register}
+            control={control}
+            setValue={setValue}
+            getValues={getValues}
+          />
+          <AdditionalInfoFields register={register} control={control} />
+        </tbody>
       </table>
 
       <div className="w-full m-auto flex gap-3 text-sm justify-center my-6">

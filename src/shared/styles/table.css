@@ -1,0 +1,22 @@
+.btn-sm {
+  @apply py-0.5 rounded w-[50px] text-center;
+  background: url("/images/btn_50.png") no-repeat;
+}
+
+.btn-md {
+  @apply py-0.5 rounded w-[70px] text-center;
+  background: url("/images/btn_70.png") no-repeat;
+}
+
+.btn-lg {
+  @apply py-0.5 rounded w-[110px] text-center;
+  background: url("/images/btn_110.png") no-repeat;
+}
+
+th {
+  @apply min-w-24 p-1 pl-2 border border-gray-300 bg-gray-50 text-left font-medium text-gray-900 align-middle;
+}
+
+td {
+  @apply border border-gray-300 py-1 px-2;
+}

@@ -39,5 +39,5 @@ abbr {
 }
 
 input[type="checkbox"] {
-  @apply flex items-center justify-center rounded-sm border border-gray-400 mr-2 h-4 w-4 appearance-none text-white cursor-pointer checked:bg-primary checked:before:content-['✓'] checked:before:text-base checked:font-bold checked:border-none;
+  @apply flex items-center justify-center rounded-sm border border-gray-400 mr-2 h-4 w-4 appearance-none text-white cursor-pointer checked:bg-accent checked:before:content-['✓'] checked:before:text-base checked:font-bold checked:border-none;
 }

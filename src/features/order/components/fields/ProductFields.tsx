@@ -63,131 +63,216 @@ const optionItems = [
 ];
 
 export default function ProductFields({ register, setValue, watch }: Props) {
+  const options = watch("options") || {};
+  const basePrice = watch("price") || 0;
   const [showOptions, setShowOptions] = useState(false);
 
   // 상품 선택 시 상세상품명 자동 입력
   const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setValue("productName", e.target.value);
-    setValue("productDetail", e.target.value); // 상세상품명 자동 입력
+    const selected = products.find((p) => p.code === e.target.value);
+    setValue("productName", selected?.code || "");
+    setValue("productDetail", selected?.name || "");
   };
 
-  // watch로 금액 계산
-  const basePrice = watch("price") || 0;
-  const optionValues = watch("options") || {};
-  const optionTotal = Object.values(optionValues).reduce(
-    (sum, val) => sum + (Number(val) || 0),
-    0
-  );
+  // 결제금액 합산(옵션 포함)
+  const calculatePayment = (newPrice?: number) => {
+    const price = newPrice ?? watch("price") ?? 0;
+    const currentOptions = watch("options") || {};
 
-  // 결제액 계산
-  const totalPayment = basePrice + optionTotal;
-  setValue("payment", totalPayment);
+    let optionTotal = 0;
+    Object.values(currentOptions).forEach((opt) => {
+      if (opt?.checked) {
+        optionTotal += Number(opt.price) || 0;
+      }
+    });
+
+    setValue("payment", price + optionTotal);
+  };
+
+  // 원청금액 클릭이벤트
+  const plusOriginPrice = (num: number) => {
+    setValue("originPrice", watch("originPrice") + num);
+  };
+
+  //결제금액 클릭이벤트
+  const plusPrice = (num: number) => {
+    setValue("price", watch("price") + num);
+    calculatePayment();
+  };
 
   return (
     <>
       {/* 상품명 & 상세상품명 */}
       <tr>
-        <th className="min-w-24 p-1 pl-2 border border-gray-300 bg-gray-50 text-left font-medium text-gray-900">
+        <th>
           상품명 <span className="text-red-500">*</span>
         </th>
-        <td className="border border-gray-300 py-1 px-2">
-          <select
-            {...register("productName", { required: true })}
-            onChange={(e) => {
-              const selected = products.find((p) => p.code === e.target.value);
-              setValue("productName", selected?.code || "");
-              setValue("productDetail", selected?.name || "");
-            }}
-            className="border border-gray-300 rounded p-0.5 text-xs w-full"
-          >
-            <option value="">상품을 선택하세요</option>
-            {products.map((p) => (
-              <option key={p.code} value={p.code}>
-                [{p.code}] {p.name}
-              </option>
-            ))}
-          </select>
-        </td>
-
-        <th className="min-w-24 p-1 pl-2 border border-gray-300 bg-gray-50 text-left font-medium text-gray-900">
-          상세상품명
-        </th>
-        <td className="border border-gray-300 py-1 px-2">
-          <input
-            {...register("productDetail")}
-            className="border border-gray-300 rounded p-0.5 text-xs w-full"
-          />
+        <td colSpan={3}>
+          <div className="flex gap-3">
+            <select
+              {...register("productName", { required: true })}
+              onChange={(e) => {
+                handleProductChange(e);
+              }}
+              className="border border-gray-300 rounded p-0.5 text-xs w-30"
+            >
+              <option value="">상품을 선택하세요</option>
+              {products.map((p) => (
+                <option key={p.code} value={p.code}>
+                  [{p.code}] {p.name}
+                </option>
+              ))}
+            </select>
+            <div className="flex items-center gap-1">
+              <p>상세상품명 :</p>
+              <input
+                {...register("productDetail")}
+                className="border border-gray-300 rounded p-0.5 text-xs w-30"
+              />
+            </div>
+            <div className="flex items-center gap-1">
+              <p>
+                <span className="text-red-500">*</span> 수량 :
+              </p>
+              <input
+                type="number"
+                {...register("quantity", { valueAsNumber: true })}
+                className="border border-gray-300 rounded p-0.5 text-xs w-12"
+                min={1}
+              />
+            </div>
+          </div>
         </td>
       </tr>
 
       {/* 수량 & 원청금액 */}
       <tr>
-        <th className="min-w-24 p-1 pl-2 border border-gray-300 bg-gray-50 text-left font-medium text-gray-900">
-          수량 <span className="text-red-500">*</span>
-        </th>
-        <td className="border border-gray-300 py-1 px-2">
-          <input
-            type="number"
-            {...register("quantity", { valueAsNumber: true })}
-            className="border border-gray-300 rounded p-0.5 text-xs w-full"
-            min={1}
-          />
-        </td>
-
-        <th className="min-w-24 p-1 pl-2 border border-gray-300 bg-gray-50 text-left font-medium text-gray-900">
-          원청금액
-        </th>
-        <td className="border border-gray-300 py-1 px-2">
+        <th>원청금액</th>
+        <td colSpan={3}>
           <input
             type="number"
             {...register("originPrice", { valueAsNumber: true })}
-            className="border border-gray-300 rounded p-0.5 text-xs w-full"
+            className="border border-gray-300 rounded p-0.5 text-xs w-28"
           />
+          <button
+            type="button"
+            className="btn-sm"
+            onClick={() => plusOriginPrice(10000)}
+          >
+            ₩ 1만
+          </button>
+          <button
+            type="button"
+            className="btn-sm"
+            onClick={() => plusOriginPrice(60000)}
+          >
+            ₩ 6만
+          </button>
+          <button
+            type="button"
+            className="btn-sm"
+            onClick={() => plusOriginPrice(70000)}
+          >
+            ₩ 7만
+          </button>
+          <button
+            type="button"
+            className="btn-sm"
+            onClick={() => plusOriginPrice(80000)}
+          >
+            ₩ 8만
+          </button>
         </td>
       </tr>
 
       {/* 결제금액 */}
       <tr>
-        <th className="min-w-24 p-1 pl-2 border border-gray-300 bg-gray-50 text-left font-medium text-gray-900">
-          결제금액(옵션 제외)
-        </th>
-        <td className="border border-gray-300 py-1 px-2">
-          <input
-            type="number"
-            {...register("price", { valueAsNumber: true })}
-            className="border border-gray-300 rounded p-0.5 text-xs w-full"
-          />
-        </td>
-
-        <th className="min-w-24 p-1 pl-2 border border-gray-300 bg-gray-50 text-left font-medium text-gray-900">
-          옵션상품 보기
-        </th>
-        <td className="border border-gray-300 py-1 px-2">
-          <input
-            type="checkbox"
-            checked={showOptions}
-            onChange={() => setShowOptions((prev) => !prev)}
-          />{" "}
-          옵션상품 추가
+        <th>결제금액(옵션 제외)</th>
+        <td colSpan={3}>
+          <div className="flex gap-2">
+            <div>
+              <input
+                type="number"
+                {...register("price", { valueAsNumber: true })}
+                onChange={(e) => {
+                  const value = Number(e.target.value) || 0;
+                  setValue("price", value);
+                  calculatePayment(value); // price 입력 시 즉시 계산
+                }}
+                className="border border-gray-300 rounded p-0.5 text-xs w-28"
+              />
+              <button
+                type="button"
+                className="btn-sm"
+                onClick={() => plusPrice(10000)}
+              >
+                ₩ 1만
+              </button>
+              <button
+                type="button"
+                className="btn-sm"
+                onClick={() => plusPrice(60000)}
+              >
+                ₩ 6만
+              </button>
+              <button
+                type="button"
+                className="btn-sm"
+                onClick={() => plusPrice(70000)}
+              >
+                ₩ 7만
+              </button>
+              <button
+                type="button"
+                className="btn-sm"
+                onClick={() => plusPrice(80000)}
+              >
+                ₩ 8만
+              </button>
+            </div>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                checked={showOptions}
+                onChange={() => {
+                  setShowOptions((prev) => !prev);
+                  calculatePayment();
+                }}
+              />
+              <label>옵션상품 추가</label>
+            </div>
+          </div>
         </td>
       </tr>
 
       {/* 옵션상품 목록 */}
       {showOptions && (
         <tr>
-          <th className="min-w-24 p-1 pl-2 border border-gray-300 bg-gray-50 text-left font-medium text-gray-900 align-top">
-            옵션상품
-          </th>
-          <td colSpan={3} className="border border-gray-300 py-1 px-2">
+          <th>옵션상품</th>
+          <td colSpan={3}>
             <div className="grid grid-cols-2 gap-1">
               {optionItems.map((item) => (
                 <label key={item} className="flex items-center gap-1">
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    onChange={(e) => {
+                      setValue(`options.${item}.checked`, e.target.checked);
+                      calculatePayment(); // 체크박스 클릭 시 계산
+                    }}
+                  />
                   <input
                     type="number"
-                    {...register(`options.${item}`, { valueAsNumber: true })}
+                    {...register(`options.${item}.price`, {
+                      valueAsNumber: true,
+                    })}
+                    onChange={(e) => {
+                      setValue(
+                        `options.${item}.price`,
+                        Number(e.target.value) || 0
+                      );
+                      calculatePayment(); // 옵션 금액 입력 시 계산
+                    }}
                     className="border border-gray-300 rounded p-0.5 text-xs w-16"
-                    placeholder="0"
                   />
                   <span>{item}</span>
                 </label>
@@ -199,17 +284,24 @@ export default function ProductFields({ register, setValue, watch }: Props) {
 
       {/* 결제액 */}
       <tr>
-        <th className="min-w-24 p-1 pl-2 border border-gray-300 bg-gray-50 text-left font-medium text-gray-900">
-          결제액(옵션 포함)
-        </th>
-        <td colSpan={3} className="border border-gray-300 py-1 px-2">
+        <th>결제액(옵션 포함)</th>
+        <td colSpan={3}>
           <input
             type="number"
             {...register("payment")}
-            value={totalPayment}
             readOnly
             className="border border-gray-300 rounded p-0.5 text-xs w-full bg-gray-100"
           />
+        </td>
+      </tr>
+
+      <tr>
+        <th>상품이미지</th>
+        <td colSpan={3}>
+          <div className="flex gap-1">
+            <button className="btn-md">이미지검색</button>
+            <button className="btn-md">이미지등록</button>
+          </div>
         </td>
       </tr>
     </>
