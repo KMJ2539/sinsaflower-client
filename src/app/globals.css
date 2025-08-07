@@ -41,3 +41,18 @@ abbr {
 input[type="checkbox"] {
   @apply flex items-center justify-center rounded-sm border border-gray-400 mr-2 h-4 w-4 appearance-none text-white cursor-pointer checked:bg-accent checked:before:content-['✓'] checked:before:text-base checked:font-bold checked:border-none;
 }
+
+.btn-sm {
+  @apply py-0.5 rounded w-[50px] text-center;
+  background: url("/images/btn_50.png") no-repeat;
+}
+
+.btn-md {
+  @apply py-0.5 rounded w-[70px] text-center;
+  background: url("/images/btn_70.png") no-repeat;
+}
+
+.btn-lg {
+  @apply py-0.5 rounded w-[110px] text-center;
+  background: url("/images/btn_110.png") no-repeat;
+}

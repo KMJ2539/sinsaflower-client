@@ -1,0 +1,31 @@
+.order-table {
+  @apply w-full text-sm border border-gray-200 rounded-xl overflow-hidden shadow-lg bg-white;
+}
+
+.order-table thead {
+  @apply bg-gradient-to-r from-primary/10 to-accent/10 text-center border-b-2 border-primary/30;
+}
+
+.order-table th {
+  @apply border-r border-gray-200 font-semibold text-gray-700 py-2 px-1;
+}
+
+.order-table th:last-child {
+  @apply border-r-0;
+}
+
+.order-table td {
+  @apply border-r border-gray-100 px-2 py-1;
+}
+
+.order-table td:last-child {
+  @apply border-r-0;
+}
+
+.order-table tbody tr {
+  @apply hover:bg-gradient-to-r hover:from-light/30 hover:to-primary/5 transition-all duration-200;
+}
+
+.order-table tbody tr:nth-child(even) {
+  @apply bg-gray-100/50;
+}

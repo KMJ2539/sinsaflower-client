@@ -6,7 +6,7 @@ import {
   UseFormSetValue,
 } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { OrderFormValues } from "../OrderForm";
+import { OrderFormValues } from "../form/OrderForm";
 
 interface Props {
   register: UseFormRegister<OrderFormValues>;

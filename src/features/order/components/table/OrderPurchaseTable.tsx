@@ -1,0 +1,304 @@
+import TruncateText from "@/shared/components/ui/TruncateText";
+import OrderStatusTag from "../list/OrderStatusTag";
+import "@/shared/styles/orderTable.css";
+import Image from "next/image";
+
+type OrderPurchaseValue = {
+  orderNumber: string; //주문번호
+  orderType: string; //구분(직/본)
+  orderDate: string; //주문접수일
+  orderTime: string; //주문접수시각
+  deliveryDate: string; //배송요구일
+  deliveryTime: string; //배송요구시간(기본시간, 즉시배송, 11:00...)
+  sender: string; //주문자
+  receiver: string; //받는분
+  corpName: string; //재이플라워
+  corpAddress: string; //강원 속초시
+  productName: string; //상품명
+  deliveryAddress: string; //배송지
+  originPrice: number; //원청액
+  payment: number; //결제액
+  sms: string; //문자 성공(성공/거부/실패)
+  fax: string; //팩스 성공(성공/거부/실패)
+  deliveryStatus: string; //배송상태(미확인/주문접수/배송준비/배송완료) //주문거절은?
+  consignee: string; //인수자
+  isDelivery: boolean; //배송 활성화
+  onSite: boolean; //현장 활성화
+};
+
+const dummyData: OrderPurchaseValue[] = [
+  {
+    orderNumber: "877915",
+    orderType: "직",
+    orderDate: "25-07-22",
+    orderTime: "18:43",
+    deliveryDate: "25-07-31",
+    deliveryTime: "기본시간",
+    sender: "",
+    receiver: "고인 최영옥",
+    corpAddress: "강원 속초시",
+    corpName: "제이플라워",
+    productName: "근조3단",
+    deliveryAddress: "강원도 강릉시 사천면 방동길 38 (방동리,강릉아산병원)",
+    originPrice: 0,
+    payment: 200000,
+    sms: "성공",
+    fax: "거부",
+    deliveryStatus: "배송완료",
+    consignee: "이두호",
+    isDelivery: true,
+    onSite: false,
+  },
+  {
+    orderNumber: "877916",
+    orderType: "직",
+    orderDate: "25-07-22",
+    orderTime: "18:43",
+    deliveryDate: "25-07-31",
+    deliveryTime: "기본시간",
+    sender: "",
+    receiver: "고인 최영옥",
+    corpAddress: "강원 속초시",
+    corpName: "제이플라워",
+    productName: "근조3단",
+    deliveryAddress: "강원도 강릉시 사천면 방동길 38 (방동리,강릉아산병원)",
+    originPrice: 0,
+    payment: 200000,
+    sms: "성공",
+    fax: "거부",
+    deliveryStatus: "배송준비",
+    consignee: "이두호",
+    isDelivery: true,
+    onSite: false,
+  },
+  {
+    orderNumber: "877917",
+    orderType: "직",
+    orderDate: "25-07-22",
+    orderTime: "18:43",
+    deliveryDate: "25-07-31",
+    deliveryTime: "기본시간",
+    sender: "",
+    receiver: "고인 최영옥",
+    corpAddress: "강원 속초시",
+    corpName: "제이플라워",
+    productName: "근조3단",
+    deliveryAddress: "강원도 강릉시 사천면 방동길 38 (방동리,강릉아산병원)",
+    originPrice: 0,
+    payment: 200000,
+    sms: "성공",
+    fax: "거부",
+    deliveryStatus: "주문접수",
+    consignee: "이두호",
+    isDelivery: false,
+    onSite: true,
+  },
+  {
+    orderNumber: "877918",
+    orderType: "직",
+    orderDate: "25-07-22",
+    orderTime: "18:43",
+    deliveryDate: "25-07-31",
+    deliveryTime: "기본시간",
+    sender: "",
+    receiver: "고인 최영옥",
+    corpAddress: "강원 속초시",
+    corpName: "제이플라워",
+    productName: "근조3단",
+    deliveryAddress: "강원도 강릉시 사천면 방동길 38 (방동리,강릉아산병원)",
+    originPrice: 0,
+    payment: 200000,
+    sms: "성공",
+    fax: "거부",
+    deliveryStatus: "미확인",
+    consignee: "이두호",
+    isDelivery: false,
+    onSite: false,
+  },
+  {
+    orderNumber: "877919",
+    orderType: "본",
+    orderDate: "25-07-22",
+    orderTime: "18:43",
+    deliveryDate: "25-07-31",
+    deliveryTime: "기본시간",
+    sender: "",
+    receiver: "고인 최영옥",
+    corpAddress: "강원 속초시",
+    corpName: "제이플라워",
+    productName: "근조3단",
+    deliveryAddress: "강원도 강릉시 사천면 방동길 38 (방동리,강릉아산병원)",
+    originPrice: 0,
+    payment: 200000,
+    sms: "성공",
+    fax: "거부",
+    deliveryStatus: "배송완료",
+    consignee: "이두호",
+    isDelivery: true,
+    onSite: false,
+  },
+];
+
+export function OrderPurchaseTable() {
+  return (
+    <div className="overflow-x-auto">
+      <table className="order-table">
+        <thead>
+          <tr>
+            <th className="w-10">순번</th>
+            <th className="w-24">주문번호</th>
+            <th className="w-10">구분</th>
+            <th className="w-64">
+              주문접수일
+              <br />
+              배송요구일
+            </th>
+            <th className=" ">주문자</th>
+            <th className="w-36">받는분</th>
+            <th className="w-40">수주회원</th>
+            <th className="w-64">
+              상품명
+              <br />
+              배송지
+            </th>
+            <th className="w-24">
+              원청액
+              <br />
+              결제액
+            </th>
+            <th className="w-20">
+              문자
+              <br />
+              팩스
+            </th>
+            <th className="w-52">
+              배송상태
+              <br />
+              인수자
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {dummyData.map((order, i) => (
+            <tr key={order.orderNumber} className="text-center">
+              <td className="font-medium text-gray-600 text-sm">{i + 1}</td>
+              <td>
+                <div className="text-primary font-semibold underline cursor-pointer hover:text-accent transition-colors text-sm">
+                  {order.orderNumber}
+                </div>
+                <Image
+                  src="/icons/icon_08.png"
+                  alt="insu"
+                  width={10}
+                  height={10}
+                  className="cursor-pointer m-auto pt-1"
+                />
+              </td>
+              <td>
+                <span className="inline-block px-2 py-1 bg-primary/10 text-primary font-medium rounded-md text-xs">
+                  {order.orderType}
+                </span>
+              </td>
+              <td className="text-left">
+                <div className="text-gray-700 text-sm">
+                  {order.orderDate} {order.orderTime}
+                </div>
+                <div className="text-sm">
+                  <span className="text-primary font-medium">
+                    {order.deliveryDate}
+                  </span>{" "}
+                  <span className="text-danger font-medium">
+                    {order.deliveryTime}
+                  </span>
+                </div>
+              </td>
+              <td className="text-gray-600 text-sm">{order.sender || "-"}</td>
+              <td className="font-medium text-gray-800 text-sm">
+                {order.receiver}
+              </td>
+              <td>
+                <div className="text-gray-500 text-sm">{order.corpAddress}</div>
+                <div className="font-medium text-gray-700 text-sm">
+                  {order.corpName}
+                </div>
+              </td>
+              <td>
+                <div className="font-bold text-gray-800 mb-1 text-sm">
+                  {order.productName}
+                </div>
+                <div className="text-gray-600 text-sm">
+                  <TruncateText text={order.deliveryAddress} />
+                </div>
+              </td>
+              <td className="text-right pr-2">
+                <div className="text-gray-500 text-sm">
+                  {order.originPrice.toLocaleString()}
+                </div>
+                <div className="font-bold text-primary text-sm">
+                  {order.payment.toLocaleString()}
+                </div>
+              </td>
+              <td>
+                <div
+                  className={`font-medium text-sm ${
+                    order.sms === "성공" ? "text-success" : "text-danger"
+                  }`}
+                >
+                  {order.sms}
+                </div>
+                <div
+                  className={`font-medium text-sm ${
+                    order.fax === "성공" ? "text-success" : "text-danger"
+                  }`}
+                >
+                  {order.fax}
+                </div>
+              </td>
+              <td>
+                <div className="mb-2">
+                  <select
+                    className={`w-full text-xs px-2 py-1 rounded border ${
+                      order.deliveryStatus === "배송완료"
+                        ? "bg-gray-100 text-gray-600 cursor-not-allowed"
+                        : "bg-white text-gray-800 border-gray-300 hover:border-primary"
+                    }`}
+                    disabled={order.deliveryStatus === "배송완료"}
+                    defaultValue={order.deliveryStatus}
+                  >
+                    <option value="미확인">미확인</option>
+                    <option value="주문접수">주문접수</option>
+                    <option value="배송준비">배송준비</option>
+                    <option value="배송완료">배송완료</option>
+                  </select>
+                </div>
+                <div className="flex gap-1 mb-1 items-center">
+                  <button
+                    className={`px-1 py-1 text-xs rounded font-medium transition-all duration-200 ${
+                      order.isDelivery
+                        ? "bg-green-500 text-white shadow-sm"
+                        : "bg-gray-600 text-white shadow-sm"
+                    }`}
+                  >
+                    배송
+                  </button>
+                  <button
+                    className={`px-1 py-1 text-xs rounded font-medium transition-all duration-200 ${
+                      order.onSite
+                        ? "bg-green-500 text-white shadow-sm"
+                        : "bg-gray-600 text-white shadow-sm"
+                    }`}
+                  >
+                    현장
+                  </button>
+                  <span className="text-gray-600 text-xs">
+                    {order.consignee}
+                  </span>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}

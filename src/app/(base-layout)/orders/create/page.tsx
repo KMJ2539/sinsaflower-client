@@ -1,4 +1,4 @@
-import OrderForm from "@/features/order/components/OrderForm";
+import OrderForm from "@/features/order/components/form/OrderForm";
 import ContentLayout from "@/shared/components/layout/ContentLayout";
 
 export default function Page() {

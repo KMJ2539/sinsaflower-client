@@ -1,5 +1,5 @@
 import { Control, useFieldArray, UseFormRegister } from "react-hook-form";
-import { OrderFormValues } from "../OrderForm";
+import { OrderFormValues } from "../form/OrderForm";
 
 interface Props {
   register: UseFormRegister<OrderFormValues>;

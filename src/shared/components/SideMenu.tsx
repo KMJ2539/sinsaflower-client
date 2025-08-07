@@ -6,51 +6,65 @@ const SideMenu = async () => {
   const userInfo = await getUser();
 
   return (
-    <aside className="md:col-span-2 space-y-4">
-      <div className="bg-white p-4 rounded shadow-sm text-sm">
+    <aside className="md:col-span-2 space-y-6">
+      {/* 사용자 정보 카드 */}
+      <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-gray-200 text-sm">
         {userInfo != null ? (
           <div>
-            <h2 className="font-bold text-center">
+            <h2 className="font-bold text-center text-lg text-gray-800 mb-3">
               {userInfo?.name || userInfo?.username || userInfo?.email} 님
             </h2>
-            <p className="text-gray-600 text-center">
-              잔금총액: <strong>{formatCurrency(userInfo?.balance)}원</strong>
+            <p className="text-gray-600 text-center mb-4">
+              잔금총액:{" "}
+              <strong className="text-primary text-lg">
+                {formatCurrency(userInfo?.balance)}원
+              </strong>
             </p>
-            <div className="border-b my-2" />
-            <div className="mt-1 space-y-0.5">
-              <p className="flex justify-between">
-                신사 포인트
-                <strong>{formatCurrency(userInfo?.sinsaPoints)}P</strong>
+            <div className="border-b border-gray-200 my-3" />
+            <div className="mt-3 space-y-2">
+              <p className="flex justify-between items-center">
+                <span className="text-gray-600">신사 포인트</span>
+                <strong className="text-accent">
+                  {formatCurrency(userInfo?.sinsaPoints)}P
+                </strong>
               </p>
-              <p className="flex justify-between">
-                등급 포인트
-                <strong>{formatCurrency(userInfo?.gradePoints)}P</strong>
+              <p className="flex justify-between items-center">
+                <span className="text-gray-600">등급 포인트</span>
+                <strong className="text-accent">
+                  {formatCurrency(userInfo?.gradePoints)}P
+                </strong>
               </p>
             </div>
-            <div className="my-2 p-2 px-4 bg-gray-100 rounded space-y-0.5">
-              <div className="flex justify-between">
-                수주미확인
-                <strong>{userInfo?.unconfirmedOrders} 건</strong>
+            <div className="my-4 p-3 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg space-y-2 border border-primary/20">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700">수주미확인</span>
+                <strong className="text-danger">
+                  {userInfo?.unconfirmedOrders} 건
+                </strong>
               </div>
-              <div className="flex justify-between">
-                수주미배송
-                <strong>{userInfo?.undeliveredOrders} 건</strong>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700">수주미배송</span>
+                <strong className="text-danger">
+                  {userInfo?.undeliveredOrders} 건
+                </strong>
               </div>
             </div>
-            <button className="mt-1 w-full border border-green-800 text-green-800 bg-green-100 py-1 rounded">
+            <button className="mt-3 w-full bg-gradient-to-r from-primary to-accent text-white py-2 rounded-lg font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200">
               신사멤버십 혜택보기
             </button>
           </div>
         ) : (
           <div>
-            <h2 className="text-base text-center px-2 py-5">
-              회원가입을 하시면 신사플라워의
+            <h2 className="text-base text-center px-2 py-5 text-gray-700">
+              회원가입을 하시면
+              <br />
+              <span className="text-primary font-semibold">신사플라워</span> 의
               <br />
               다양한 혜택을 받으실 수 있습니다.
             </h2>
 
             <Link href="/login">
-              <button className="my-2 w-full bg-primary hover:bg-primary-hover text-white py-2 rounded text-md">
+              <button className="my-2 w-full bg-gradient-to-r from-primary to-accent text-white py-3 rounded-lg text-md font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200">
                 로그인
               </button>
             </Link>
@@ -59,122 +73,112 @@ const SideMenu = async () => {
       </div>
 
       {/* 주문관리 메뉴 */}
-      <div className="bg-white p-4 rounded shadow">
-        <h3 className="font-semibold text-md mb-2 border-b pb-1">주문관리</h3>
-        <ul className="space-y-1 text-sm">
+      <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-gray-200">
+        <h3 className="font-semibold text-lg mb-4 border-b border-gray-200 pb-2 text-gray-800">
+          주문관리
+        </h3>
+        <ul className="space-y-2 text-sm">
           <li>
-            <Link href="/members" className="hover:underline">
+            <Link
+              href="/members"
+              className="hover:text-primary transition-colors duration-200 flex items-center py-1"
+            >
+              <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
               회원검색
             </Link>
           </li>
           <li>
-            <Link href="/orders/create" className="hover:underline text-left">
+            <Link
+              href="/orders/create"
+              className="hover:text-primary transition-colors duration-200 flex items-center py-1"
+            >
+              <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
               발주
             </Link>
           </li>
           <li>
-            <Link href="/orders/purchase" className="hover:underline">
+            <Link
+              href="/orders/purchase"
+              className="hover:text-primary transition-colors duration-200 flex items-center py-1"
+            >
+              <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
               전체발주리스트
             </Link>
           </li>
           <li>
-            <Link href="/orders/sales" className="hover:underline">
+            <Link
+              href="/orders/sales"
+              className="hover:text-primary transition-colors duration-200 flex items-center py-1"
+            >
+              <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
               전체수주리스트
             </Link>
           </li>
           <li>
-            <Link href="/orders/pending" className="hover:underline">
+            <Link
+              href="/orders/pending"
+              className="hover:text-primary transition-colors duration-200 flex items-center py-1"
+            >
+              <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
               미확인주문리스트
             </Link>
           </li>
           <li>
-            <Link href="/orders/canceled" className="hover:underline">
+            <Link
+              href="/orders/canceled"
+              className="hover:text-primary transition-colors duration-200 flex items-center py-1"
+            >
+              <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
               취소주문리스트
             </Link>
           </li>
         </ul>
       </div>
 
-      {/* 게시판 메뉴 */}
-      {/* <div className="bg-white p-4 rounded shadow">
-        <h3 className="font-semibold text-md mb-2 border-b pb-1">게시판</h3>
-        <ul className="space-y-1 text-sm">
-          <li>
-            <Link href="/notice" className="hover:underline">
-              공지사항
-            </Link>
-          </li>
-          <li>
-            <Link href="/board" className="hover:underline">
-              자유게시판
-            </Link>
-          </li>
-        </ul>
-      </div> */}
-
       {/* 정산관리 메뉴 */}
-      <div className="bg-white p-4 rounded shadow">
-        <h3 className="font-semibold text-md mb-2 border-b pb-1">정산관리</h3>
-        <ul className="space-y-1 text-sm">
+      <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-gray-200">
+        <h3 className="font-semibold text-lg mb-4 border-b border-gray-200 pb-2 text-gray-800">
+          정산관리
+        </h3>
+        <ul className="space-y-2 text-sm">
           <li>
-            <Link href="/settlement-detail" className="hover:underline">
+            <Link
+              href="/settlement-detail"
+              className="hover:text-primary transition-colors duration-200 flex items-center py-1"
+            >
+              <span className="w-2 h-2 bg-accent rounded-full mr-3"></span>
               정산내역
             </Link>
           </li>
           <li>
-            <a href="#" className="hover:underline">
+            <a
+              href="#"
+              className="hover:text-primary transition-colors duration-200 flex items-center py-1"
+            >
+              <span className="w-2 h-2 bg-accent rounded-full mr-3"></span>
               충전하기
             </a>
           </li>
           <li>
-            <a href="#" className="hover:underline">
+            <a
+              href="#"
+              className="hover:text-primary transition-colors duration-200 flex items-center py-1"
+            >
+              <span className="w-2 h-2 bg-accent rounded-full mr-3"></span>
               출금요청
             </a>
           </li>
           <li>
-            <a href="#" className="hover:underline">
+            <a
+              href="#"
+              className="hover:text-primary transition-colors duration-200 flex items-center py-1"
+            >
+              <span className="w-2 h-2 bg-accent rounded-full mr-3"></span>
               계산서 발행내역
             </a>
           </li>
         </ul>
       </div>
-
-      {/* 관리자 메뉴 - 관리자만 표시
-      {isAdmin && (
-        <div className="bg-red-50 p-2 rounded shadow-sm border border-red-200">
-          <h3 className="font-semibold text-xs border-b border-red-200 pb-1 mb-1 text-red-700">
-            관리자
-          </h3>
-          <ul className="space-y-0.5 text-xs">
-            <li>
-              <Link
-                href="/admin-dashboard"
-                className="hover:underline text-left"
-              >
-                회원 승인 관리
-              </Link>
-            </li>
-            <li>
-              <a
-                href="/admin-member-approval"
-                className="hover:underline"
-              >
-                회원 승인
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:underline text-red-600">
-                주문 관리
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:underline text-red-600">
-                시스템 설정
-              </a>
-            </li>
-          </ul>
-        </div>
-      )} */}
     </aside>
   );
 };

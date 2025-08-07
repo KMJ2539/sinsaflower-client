@@ -1,5 +1,5 @@
 import { UseFormRegister } from "react-hook-form";
-import { OrderFormValues } from "../OrderForm";
+import { OrderFormValues } from "../form/OrderForm";
 
 interface Props {
   register: UseFormRegister<OrderFormValues>;
@@ -15,7 +15,7 @@ export default function BasicInfoFields({ register }: Props) {
           <div className="flex items-center">
             <input
               {...register("specialNote")}
-              className="border border-gray-300 rounded p-0.5 text-xs w-full resize-none"
+              className="border border-gray-300 rounded p-0.5 text-xs w-full resize-none focus:ring-1 focus:ring-primary/20 focus:border-primary transition-all"
               disabled
             />
           </div>
@@ -32,28 +32,25 @@ export default function BasicInfoFields({ register }: Props) {
             <input
               {...register("region")}
               disabled
-              className="border border-gray-300 rounded p-0.5 w-20"
+              className="border border-gray-300 rounded p-0.5 w-20 focus:ring-1 focus:ring-primary/20 focus:border-primary transition-all"
               placeholder="지역"
             />
             <input
               {...register("shopName")}
               disabled
-              className="border border-gray-300 rounded p-0.5 w-20"
+              className="border border-gray-300 rounded p-0.5 w-20 focus:ring-1 focus:ring-primary/20 focus:border-primary transition-all"
               placeholder="화원명"
             />
             <input
               {...register("phone")}
               disabled
-              className="border border-gray-300 rounded p-0.5 w-20"
+              className="border border-gray-300 rounded p-0.5 w-20 focus:ring-1 focus:ring-primary/20 focus:border-primary transition-all"
               placeholder="전화번호"
             />
 
             <button
               type="button"
-              className="py-0.5 rounded text-xs w-[70px] text-center"
-              style={{
-                background: 'url("/images/btn_70.png") no-repeat',
-              }}
+              className="py-0.5 rounded text-xs w-[70px] text-center bg-gradient-to-r from-primary to-accent text-white font-medium hover:shadow-sm transition-all duration-200"
             >
               화원검색
             </button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import "@/shared/styles/formTable.css";
 
 const EditUserForm = () => {
   const [error, setError] = useState(null);
@@ -14,7 +15,7 @@ const EditUserForm = () => {
       )}
 
       <form id="profile-edit-form">
-        <table className="w-full border-collapse text-xs border">
+        <table className="form-table">
           <tbody>
             {/* 아이디 */}
             <tr className="border-y">

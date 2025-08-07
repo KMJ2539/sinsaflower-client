@@ -1,0 +1,31 @@
+.form-table {
+  @apply w-full overflow-hidden border border-gray-300 rounded-lg  bg-white text-xs;
+}
+
+.form-table th {
+  @apply min-w-24 p-1 pl-2 border-r border-gray-200 bg-gradient-to-r from-primary/5 to-accent/5 text-left font-semibold text-gray-700 align-middle;
+}
+
+.form-table th:last-child {
+  @apply border-r-0;
+}
+
+.form-table td {
+  @apply border-r border-gray-200 py-1 px-2 align-middle;
+}
+
+.form-table td:last-child {
+  @apply border-r-0;
+}
+
+.form-table tr {
+  @apply hover:bg-gray-50/30 transition-colors duration-150 border-b border-gray-300;
+}
+
+.form-table tr:last-child {
+  @apply border-b-0;
+}
+
+.form-table tr:nth-child(even) {
+  @apply bg-gray-50/20;
+}
