@@ -21,13 +21,13 @@ export default function AdditionalInfoFields({ register, control }: Props) {
             <button
               type="button"
               onClick={() => append({ name: "" })}
-              className="btn-lg"
+              className="sf-btn-img--lg"
             >
               보내는 분 추가
             </button>
             {fields.map((field, index) => (
-              <div key={field.id} className="flex gap-2">
-                <span className="text-xs w-4 text-right">{index + 1}.</span>
+              <div key={field.id} className="flex gap-2 items-center">
+                <span className="text-xs w-4 text-left pl-2">{index + 1}.</span>
                 <input
                   {...register(`senderList.${index}.name`)}
                   className="border p-0.5 text-xs"
@@ -36,7 +36,7 @@ export default function AdditionalInfoFields({ register, control }: Props) {
                 <button
                   type="button"
                   onClick={() => remove(index)}
-                  className="btn-sm"
+                  className="sf-btn-img--sm"
                 >
                   삭제
                 </button>

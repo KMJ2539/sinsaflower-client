@@ -57,13 +57,14 @@ export default function MessageFields({
       <th>경조사어</th>
       <td colSpan={3}>
         {/* 한자 버튼 */}
-        <div className="flex flex-wrap gap-1 mb-2">
+        <div className="sf-chip-group mb-2">
           {messagePresets.map((m) => (
             <button
               key={`hanja-${m.hanja || m.hangul}`}
               type="button"
+              data-color="pink"
               onClick={() => handlePresetClick(m.hanja)}
-              className="px-2 py-0.5 text-xs border rounded bg-pink-50 hover:bg-pink-100 min-w-16"
+              className="sf-chip"
             >
               {m.hanja}
             </button>
@@ -71,13 +72,14 @@ export default function MessageFields({
         </div>
 
         {/* 한글 버튼 */}
-        <div className="flex flex-wrap gap-1 mb-2">
+        <div className="sf-chip-group mb-2">
           {messagePresets.map((m) => (
             <button
               key={`hangul-${m.hangul}`}
               type="button"
+              data-color="pink"
               onClick={() => handlePresetClick(m.hangul)}
-              className="px-2 py-0.5 text-xs border rounded bg-pink-50 hover:bg-pink-100 min-w-16"
+              className="sf-chip"
             >
               {m.hangul}
             </button>
@@ -88,7 +90,7 @@ export default function MessageFields({
         <button
           type="button"
           onClick={() => append({ text: "" })} // ✅ 객체 형태로 추가
-          className="btn-lg mb-2"
+          className="sf-btn-img--lg mb-2"
         >
           경조사어 추가
         </button>
@@ -97,7 +99,7 @@ export default function MessageFields({
         <div className="space-y-1">
           {fields.map((field, index) => (
             <div key={field.id} className="flex items-center gap-2">
-              <span className="text-xs w-4 text-right">{index + 1}.</span>
+              <span className="text-xs w-4 text-left pl-2">{index + 1}.</span>
               <input
                 {...register(`messages.${index}.text` as const)}
                 onFocus={() => setFocusedIndex(index)}
@@ -107,7 +109,7 @@ export default function MessageFields({
               <button
                 type="button"
                 onClick={() => remove(index)}
-                className="btn-sm"
+                className="sf-btn-img--sm"
               >
                 삭제
               </button>

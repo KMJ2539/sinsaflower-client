@@ -29,7 +29,7 @@ const Dashboard = () => {
     return (
       <div className="min-h-64 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-200 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-gray-600">대시보드를 불러오는 중...</p>
         </div>
       </div>
@@ -37,234 +37,307 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl shadow-sm">
           {error}
         </div>
       )}
 
       {/* Banner */}
-      <div className="bg-white p-4 rounded shadow">
-        <p className="text-sm mb-2">
-          상담/가입/정산 문의:{" "}
-          <strong className="text-red-500">1670-5800</strong>
-        </p>
-        <div className="bg-gray-100 h-32 flex items-center justify-center text-gray-500">
-          [배너 광고 영역]
+      <div className="sf-card bg-gray-100">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+              상담/가입/정산 문의
+            </h3>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-primary mb-1">
+              1670-5800
+            </div>
+          </div>
+        </div>
+        <div className="bg-white/60 h-32 flex items-center justify-center rounded-2xl border border-white/40">
+          <div className="text-center">
+            <div className="text-4xl mb-2">🎉</div>
+            <p className="text-gray-600 font-medium">신규 회원 특별 혜택</p>
+            <p className="text-sm text-gray-500">
+              지금 가입하고 다양한 혜택을 받아보세요
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* 미확인 수주 */}
+        <div className="sf-card hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-12 h-12 bg-red-100 rounded-2xl flex items-center justify-center">
+              <svg
+                className="w-6 h-6 text-red-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-gray-800">
+                {dashboardInfo.unconfirmedOrders || 0}
+              </div>
+              <div className="text-sm text-gray-500">건</div>
+            </div>
+          </div>
+          <h3 className="font-semibold text-gray-800 mb-2">미확인 수주</h3>
+          <a
+            href="/all-received-orders"
+            className="inline-flex items-center bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-md hover:shadow-lg"
+          >
+            확인하기
+            <svg
+              className="w-4 h-4 ml-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </a>
+        </div>
+
+        {/* 미배송 수주 */}
+        <div className="sf-card hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center">
+              <svg
+                className="w-6 h-6 text-orange-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                />
+              </svg>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-gray-800">
+                {dashboardInfo.unconfirmedOrders || 0}
+              </div>
+              <div className="text-sm text-gray-500">건</div>
+            </div>
+          </div>
+          <h3 className="font-semibold text-gray-800 mb-2">미배송 수주</h3>
+          <a
+            href="/all-received-orders"
+            className="inline-flex items-center bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-md hover:shadow-lg"
+          >
+            확인하기
+            <svg
+              className="w-4 h-4 ml-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </a>
+        </div>
+
+        {/* 총 매출 */}
+        <div className="sf-card hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center">
+              <svg
+                className="w-6 h-6 text-green-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                />
+              </svg>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-gray-800">
+                {formatCurrency(dashboardInfo.totalSales || 0)}
+              </div>
+              <div className="text-sm text-gray-500">원</div>
+            </div>
+          </div>
+          <h3 className="font-semibold text-gray-800 mb-2">이번 달 매출</h3>
+          <a
+            href="/settlement"
+            className="inline-flex items-center bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-md hover:shadow-lg"
+          >
+            정산보기
+            <svg
+              className="w-4 h-4 ml-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </a>
         </div>
       </div>
 
       {/* Settings */}
-      <div className="bg-white p-3 rounded shadow">
-        <div className="grid grid-cols-2 gap-3">
-          <div className="border-r pr-3">
-            <div className="flex items-center mb-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 mr-1 text-gray-600"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.736 6.979C9.208 6.193 9.696 6 10 6c.304 0 .792.193 1.264.979a1 1 0 001.715-1.029C12.279 4.784 11.232 4 10 4s-2.279.784-2.979 1.95a1 1 0 001.715 1.029zM6 12a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm7-3a1 1 0 100 2 1 1 0 000-2zM6 9a1 1 0 011-1h.01a1 1 0 110 2H7a1 1 0 01-1-1z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <h3 className="font-semibold text-sm">부재중 설정</h3>
+      <div className="sf-card">
+        <h3 className="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-6">
+          설정 관리
+        </h3>
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* 부재중 설정 */}
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-5 rounded-2xl border border-blue-100">
+            <div className="flex items-center mb-4">
+              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
+                <svg
+                  className="w-5 h-5 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <h4 className="font-semibold text-gray-800">부재중 설정</h4>
             </div>
-            <div className="text-xs">
-              <div className="flex space-x-2 mb-2">
-                <div className="flex-1">
-                  <label className="block">시작일</label>
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    시작일
+                  </label>
                   <input
                     type="date"
-                    className="w-full border rounded px-1 py-0.5 mt-0.5"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   />
                 </div>
-                <div className="flex-1">
-                  <label className="block">종료일</label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    종료일
+                  </label>
                   <input
                     type="date"
-                    className="w-full border rounded px-1 py-0.5 mt-0.5"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   />
                 </div>
               </div>
               <div className="flex space-x-2">
-                <button className="flex-1 bg-amber-200 text-white py-1 rounded text-xs">
+                <button className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 rounded-xl text-sm font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-md hover:shadow-lg">
                   설정
                 </button>
-                <button className="flex-1 bg-gray-200 text-gray-600 py-1 rounded text-xs">
+                <button className="flex-1 bg-gray-200 text-gray-600 py-2 rounded-xl text-sm font-medium hover:bg-gray-300 transition-all duration-200">
                   해제
                 </button>
               </div>
             </div>
           </div>
-          <div>
-            <div className="flex items-center mb-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 mr-1 text-gray-600"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <h3 className="font-semibold text-sm">미취급상품 설정</h3>
+
+          {/* 미취급상품 설정 */}
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-5 rounded-2xl border border-purple-100">
+            <div className="flex items-center mb-4">
+              <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mr-3">
+                <svg
+                  className="w-5 h-5 text-purple-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                  />
+                </svg>
+              </div>
+              <h4 className="font-semibold text-gray-800">미취급상품 설정</h4>
             </div>
-            <div className="grid grid-cols-3 gap-1 text-xs">
-              <label className="flex items-center">
-                <input type="checkbox" className="mr-1 h-3 w-3" />
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <label className="flex items-center p-2 bg-white/60 rounded-lg hover:bg-white/80 transition-colors duration-200 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mr-2 h-4 w-4 text-purple-600 rounded focus:ring-purple-500"
+                />
                 화환
               </label>
-              <label className="flex items-center">
-                <input type="checkbox" className="mr-1 h-3 w-3" />
+              <label className="flex items-center p-2 bg-white/60 rounded-lg hover:bg-white/80 transition-colors duration-200 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mr-2 h-4 w-4 text-purple-600 rounded focus:ring-purple-500"
+                />
                 근조
               </label>
-              <label className="flex items-center">
-                <input type="checkbox" className="mr-1 h-3 w-3" />
+              <label className="flex items-center p-2 bg-white/60 rounded-lg hover:bg-white/80 transition-colors duration-200 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mr-2 h-4 w-4 text-purple-600 rounded focus:ring-purple-500"
+                />
                 꽃다발
               </label>
-              <label className="flex items-center">
-                <input type="checkbox" className="mr-1 h-3 w-3" />
+              <label className="flex items-center p-2 bg-white/60 rounded-lg hover:bg-white/80 transition-colors duration-200 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mr-2 h-4 w-4 text-purple-600 rounded focus:ring-purple-500"
+                />
                 동양란
               </label>
-              <label className="flex items-center">
-                <input type="checkbox" className="mr-1 h-3 w-3" />
+              <label className="flex items-center p-2 bg-white/60 rounded-lg hover:bg-white/80 transition-colors duration-200 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mr-2 h-4 w-4 text-purple-600 rounded focus:ring-purple-500"
+                />
                 서양란
               </label>
-              <label className="flex items-center">
-                <input type="checkbox" className="mr-1 h-3 w-3" />
+              <label className="flex items-center p-2 bg-white/60 rounded-lg hover:bg-white/80 transition-colors duration-200 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mr-2 h-4 w-4 text-purple-600 rounded focus:ring-purple-500"
+                />
                 관엽식물
               </label>
             </div>
           </div>
         </div>
       </div>
-
-      {/* 미확인 수주 카운터 */}
-      <div className="bg-white p-3 rounded shadow">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-red-500 mr-2"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span className="font-semibold">미확인 수주건</span>
-          </div>
-          <a
-            href="/all-received-orders"
-            className="flex items-center bg-amber-200 text-white px-3 py-1 rounded-full text-sm text-black"
-          >
-            <span className="font-bold mr-1">
-              {dashboardInfo.unconfirmedOrders || 0}
-            </span>
-            건 확인하기
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 ml-1"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </a>
-        </div>
-      </div>
-
-      {/* 미확인 수주 카운터 */}
-      <div className="bg-white p-3 rounded shadow">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-red-500 mr-2"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span className="font-semibold">미배송 수주리스트</span>
-          </div>
-          <a
-            href="/all-received-orders"
-            className="flex items-center bg-amber-200 text-white px-3 py-1 rounded-full text-sm"
-          >
-            <span className="font-bold mr-1">
-              {dashboardInfo.unconfirmedOrders || 0}
-            </span>
-            건 확인하기
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 ml-1"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </a>
-        </div>
-      </div>
-
-      {/* Quick Actions
-      <div className="bg-white p-3 rounded shadow">
-        <h3 className="font-semibold text-md mb-3">빠른 실행</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          <button
-            onClick={handleOrderClick}
-            className="text-center p-3 bg-blue-50 rounded hover:bg-blue-100 transition-colors"
-          >
-            <div className="text-2xl mb-1">📝</div>
-            <div className="text-sm font-medium">발주하기</div>
-          </button>
-          <a
-            href="/all-orders"
-            className="text-center p-3 bg-green-50 rounded hover:bg-green-100 transition-colors"
-          >
-            <div className="text-2xl mb-1">📋</div>
-            <div className="text-sm font-medium">주문목록</div>
-          </a>
-          <a
-            href="/settlement"
-            className="text-center p-3 bg-yellow-50 rounded hover:bg-yellow-100 transition-colors"
-          >
-            <div className="text-2xl mb-1">💰</div>
-            <div className="text-sm font-medium">정산</div>
-          </a>
-          <a
-            href="/notice"
-            className="text-center p-3 bg-purple-50 rounded hover:bg-purple-100 transition-colors"
-          >
-            <div className="text-2xl mb-1">📢</div>
-            <div className="text-sm font-medium">공지사항</div>
-          </a>
-        </div>
-      </div> */}
     </div>
   );
 };

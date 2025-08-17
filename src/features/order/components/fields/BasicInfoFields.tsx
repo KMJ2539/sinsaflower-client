@@ -48,10 +48,7 @@ export default function BasicInfoFields({ register }: Props) {
               placeholder="전화번호"
             />
 
-            <button
-              type="button"
-              className="py-0.5 rounded text-xs w-[70px] text-center bg-gradient-to-r from-primary to-accent text-white font-medium hover:shadow-sm transition-all duration-200"
-            >
+            <button type="button" className="sf-btn-img--md">
               화원검색
             </button>
           </p>

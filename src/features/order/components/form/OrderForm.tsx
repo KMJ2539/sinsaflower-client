@@ -4,7 +4,6 @@ import { Button } from "@/shared/components/ui/Button";
 import { useForm } from "react-hook-form";
 import BasicInfoFields from "../fields/BasicInfoFields";
 import ProductFields from "../fields/ProductFields";
-import "@/shared/styles/formTable.css";
 import DeliveryFields from "../fields/DeliveryFields";
 import MessageFields from "../fields/MessageFields";
 import AdditionalInfoFields from "../fields/AdditionalInfoFields";
@@ -63,7 +62,7 @@ const OrderForm = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <table className="form-table">
+      <table className="sf-table sf-table--form">
         <tbody>
           <BasicInfoFields register={register} />
           <ProductFields
@@ -83,15 +82,12 @@ const OrderForm = () => {
       </table>
 
       <div className="w-full m-auto flex gap-3 text-sm justify-center my-6">
-        <button
-          type="submit"
-          className="px-4 py-2 bg-gradient-to-r from-primary to-accent text-white rounded font-medium hover:shadow-md transition-all duration-200"
-        >
+        <button type="submit" className="sf-btn sf-btn--primary sf-btn--md">
           발주하기
         </button>
         <button
           type="button"
-          className="px-4 py-2 bg-gray-100 text-gray-700 rounded font-medium hover:bg-gray-200 transition-all duration-200"
+          className="sf-btn sf-btn--secondary sf-btn--md"
           onClick={() => alert("미리보기")}
         >
           미리보기

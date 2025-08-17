@@ -30,9 +30,9 @@ export default function UserDropdown() {
         className="flex items-center gap-2 !text-sm font-semibold text-gray-800 hover:text-primary hover:scale-105 transition-all duration-200 bg-white/50 backdrop-blur-sm px-4 rounded-lg "
       >
         <div className="w-6 h-6 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center text-white text-xs font-bold">
-          화
+          다
         </div>
-        <span>화환앤플라워 님</span>
+        <span>다경플라워 님</span>
         <Image
           src="/icons/dropdown-black.svg"
           alt="dropdown"

@@ -11,10 +11,10 @@ const SideMenu = async () => {
       <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-gray-200 text-sm">
         {userInfo != null ? (
           <div>
-            <h2 className="font-bold text-center text-lg text-gray-800 mb-3">
-              {userInfo?.name || userInfo?.username || userInfo?.email} 님
+            <h2 className="font-bold text-center text-lg text-gray-800 mb-2">
+              {userInfo?.name || userInfo?.username || "다경플라워"} 님
             </h2>
-            <p className="text-gray-600 text-center mb-4">
+            <p className="text-gray-600 text-center mb-3">
               잔금총액:{" "}
               <strong className="text-primary text-lg">
                 {formatCurrency(userInfo?.balance)}원
@@ -35,21 +35,24 @@ const SideMenu = async () => {
                 </strong>
               </p>
             </div>
-            <div className="my-4 p-3 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg space-y-2 border border-primary/20">
+            <div className="my-3 p-3 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg space-y-2 border border-primary/20">
               <div className="flex justify-between items-center">
                 <span className="text-gray-700">수주미확인</span>
                 <strong className="text-danger">
-                  {userInfo?.unconfirmedOrders} 건
+                  {userInfo?.unconfirmedOrders || 0} 건
                 </strong>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-700">수주미배송</span>
                 <strong className="text-danger">
-                  {userInfo?.undeliveredOrders} 건
+                  {userInfo?.undeliveredOrders || 0} 건
                 </strong>
               </div>
             </div>
-            <button className="mt-3 w-full bg-gradient-to-r from-primary to-accent text-white py-2 rounded-lg font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+            <button
+              type="submit"
+              className="sf-btn sf-btn--primary sf-btn--md mt-2"
+            >
               신사멤버십 혜택보기
             </button>
           </div>

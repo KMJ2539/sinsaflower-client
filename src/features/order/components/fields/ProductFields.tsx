@@ -124,7 +124,7 @@ export default function ProductFields({ register, setValue, watch }: Props) {
               ))}
             </select>
             <div className="flex items-center gap-1">
-              <p>상세상품명 :</p>
+              <p>상세상품명</p>
               <input
                 {...register("productDetail")}
                 className="border border-gray-300 rounded p-0.5 text-xs w-30"
@@ -132,7 +132,7 @@ export default function ProductFields({ register, setValue, watch }: Props) {
             </div>
             <div className="flex items-center gap-1">
               <p>
-                <span className="text-red-500">*</span> 수량 :
+                수량<span className="sf-req">*</span>
               </p>
               <input
                 type="number"
@@ -152,35 +152,39 @@ export default function ProductFields({ register, setValue, watch }: Props) {
           <input
             type="number"
             {...register("originPrice", { valueAsNumber: true })}
-            className="border border-gray-300 rounded p-0.5 text-xs w-28"
+            className="border border-gray-300 rounded p-0.5 text-xs w-28 mr-1"
           />
           <button
             type="button"
-            className="btn-sm"
+            className="sf-btn-img--sm"
             onClick={() => plusOriginPrice(10000)}
           >
-            ₩ 1만
+            <span className="sf-btn-price__currency">₩</span>
+            <span className="sf-btn-price__amount">1만</span>
           </button>
           <button
             type="button"
-            className="btn-sm"
+            className="sf-btn-img--sm"
             onClick={() => plusOriginPrice(60000)}
           >
-            ₩ 6만
+            <span className="sf-btn-price__currency">₩</span>
+            <span className="sf-btn-price__amount">6만</span>
           </button>
           <button
             type="button"
-            className="btn-sm"
+            className="sf-btn-img--sm"
             onClick={() => plusOriginPrice(70000)}
           >
-            ₩ 7만
+            <span className="sf-btn-price__currency">₩</span>
+            <span className="sf-btn-price__amount">7만</span>
           </button>
           <button
             type="button"
-            className="btn-sm"
+            className="sf-btn-img--sm"
             onClick={() => plusOriginPrice(80000)}
           >
-            ₩ 8만
+            <span className="sf-btn-price__currency">₩</span>
+            <span className="sf-btn-price__amount">8만</span>
           </button>
         </td>
       </tr>
@@ -199,38 +203,42 @@ export default function ProductFields({ register, setValue, watch }: Props) {
                   setValue("price", value);
                   calculatePayment(value); // price 입력 시 즉시 계산
                 }}
-                className="border border-gray-300 rounded p-0.5 text-xs w-28"
+                className="border border-gray-300 rounded p-0.5 text-xs w-28 mr-1"
               />
               <button
                 type="button"
-                className="btn-sm"
+                className="sf-btn-img--sm"
                 onClick={() => plusPrice(10000)}
               >
-                ₩ 1만
+                <span className="sf-btn-price__currency">₩</span>
+                <span className="sf-btn-price__amount">1만</span>
               </button>
               <button
                 type="button"
-                className="btn-sm"
+                className="sf-btn-img--sm"
                 onClick={() => plusPrice(60000)}
               >
-                ₩ 6만
+                <span className="sf-btn-price__currency">₩</span>
+                <span className="sf-btn-price__amount">6만</span>
               </button>
               <button
                 type="button"
-                className="btn-sm"
+                className="sf-btn-img--sm"
                 onClick={() => plusPrice(70000)}
               >
-                ₩ 7만
+                <span className="sf-btn-price__currency">₩</span>
+                <span className="sf-btn-price__amount">7만</span>
               </button>
               <button
                 type="button"
-                className="btn-sm"
+                className="sf-btn-img--sm"
                 onClick={() => plusPrice(80000)}
               >
-                ₩ 8만
+                <span className="sf-btn-price__currency">₩</span>
+                <span className="sf-btn-price__amount">8만</span>
               </button>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center gap-1 ml-2">
               <input
                 type="checkbox"
                 checked={showOptions}
@@ -299,8 +307,8 @@ export default function ProductFields({ register, setValue, watch }: Props) {
         <th>상품이미지</th>
         <td colSpan={3}>
           <div className="flex gap-1">
-            <button className="btn-md">이미지검색</button>
-            <button className="btn-md">이미지등록</button>
+            <button className="sf-btn-img--md">이미지검색</button>
+            <button className="sf-btn-img--md">이미지등록</button>
           </div>
         </td>
       </tr>

@@ -149,16 +149,22 @@ const RegisterForm = ({ prevStep, nextStep }: RegisterFormProps) => {
 
   return (
     <div>
-      <div className="flex justify-between border-b border-b-gray-500 pb-2 mb-6">
-        <h2 className="text-xl font-semibold">회원 정보입력</h2>
-        <p className="text-xs relative top-2">
-          <abbr className="mr-2" />
-          <span>부분은 필수입력 사항입니다.</span>
-        </p>
+      <div className="mb-4 flex justify-between items-center">
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-2">
+          회원 정보입력
+        </h2>
+        {/* <p className="text-sm text-gray-500">
+          회원가입을 위한 정보를 입력해주세요
+        </p> */}
+        <div className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full">
+          <span className="text-xs text-primary font-medium">
+            <span className="text-danger">*</span> 표시는 필수입력 사항입니다
+          </span>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid md:grid-cols-2 md:gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+        <div className="grid md:grid-cols-2 md:gap-6">
           {/* 아이디 */}
           <FormInput
             label="아이디"
@@ -192,7 +198,7 @@ const RegisterForm = ({ prevStep, nextStep }: RegisterFormProps) => {
           ></FormInput>
         </div>
 
-        <div className="grid md:grid-cols-2 md:gap-4">
+        <div className="grid md:grid-cols-2 md:gap-6">
           {/* 비밀번호 */}
           <FormInput
             label="비밀번호"
@@ -218,7 +224,7 @@ const RegisterForm = ({ prevStep, nextStep }: RegisterFormProps) => {
           ></FormInput>
         </div>
 
-        <div className="grid md:grid-cols-2 md:gap-4">
+        <div className="grid md:grid-cols-2 md:gap-6">
           {/* 휴대 전화번호 */}
           <ButtonInput
             // readOnly
@@ -264,9 +270,8 @@ const RegisterForm = ({ prevStep, nextStep }: RegisterFormProps) => {
 
         <div className="grid md:grid-cols-2">
           <div className="my-4 tracking-tight">
-            <label className="text-sm mr-5">
-              배송 지역 설정
-              <abbr />
+            <label className="text-sm mr-5 font-medium text-gray-700">
+              배송 지역 설정<span className="sf-req">*</span>
             </label>
 
             <Button
@@ -280,9 +285,9 @@ const RegisterForm = ({ prevStep, nextStep }: RegisterFormProps) => {
         </div>
 
         {/* 실제 주소 */}
-        <div className="mt-2 mb-4">
-          <label className="block font-medium mb-2 text-sm">
-            화원실제주소 <abbr />
+        <div className="mt-2 mb-6">
+          <label className="block font-medium mb-3 text-sm text-gray-700">
+            화원실제주소<span className="sf-req">*</span>
           </label>
           <div className="space-y-2">
             <div className="flex">
@@ -292,7 +297,7 @@ const RegisterForm = ({ prevStep, nextStep }: RegisterFormProps) => {
                 className={clsx(
                   "w-1/2 h-fit appearance-none rounded-md relative block px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 bg-gray-50",
                   errors.businessProfile?.officeAddress?.base?.message &&
-                    "!border-danger"
+                    "!border-danger !ring-danger"
                 )}
                 placeholder="주소 검색 버튼을 클릭하세요"
                 {...register("businessProfile.officeAddress.base", {
@@ -311,7 +316,7 @@ const RegisterForm = ({ prevStep, nextStep }: RegisterFormProps) => {
               className={clsx(
                 "appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900",
                 errors.businessProfile?.officeAddress?.detail?.message &&
-                  "!border-danger mb-0"
+                  "!border-danger !ring-danger mb-0"
               )}
               placeholder="상세 주소를 입력하세요 (동, 호수 등)"
               {...register("businessProfile.officeAddress.detail", {
@@ -347,7 +352,7 @@ const RegisterForm = ({ prevStep, nextStep }: RegisterFormProps) => {
           type="email"
         ></FormInput> */}
 
-        <div className="grid md:grid-cols-2 md:gap-4">
+        <div className="grid md:grid-cols-2 md:gap-6">
           {/* 상호명 */}
           <FormInput
             label="법인명"
@@ -371,7 +376,7 @@ const RegisterForm = ({ prevStep, nextStep }: RegisterFormProps) => {
           />
         </div>
 
-        <div className="grid md:grid-cols-2 md:gap-4">
+        <div className="grid md:grid-cols-2 md:gap-6">
           {/* 업태 */}
           <FormInput
             label="업태"
@@ -408,7 +413,7 @@ const RegisterForm = ({ prevStep, nextStep }: RegisterFormProps) => {
           />
         </div>
 
-        <div className="grid md:grid-cols-2 md:gap-4">
+        <div className="grid md:grid-cols-2 md:gap-6">
           <Controller
             control={control}
             name="businessCertFile"
@@ -426,7 +431,7 @@ const RegisterForm = ({ prevStep, nextStep }: RegisterFormProps) => {
           />
         </div>
 
-        <div className="border-b-2 border-b-gray-300 border-dashed my-6" />
+        {/* <div className="border-b-2 border-b-gray-200 border-dashed my-8" /> */}
 
         <div>
           {/* 계좌번호 */}
@@ -439,12 +444,12 @@ const RegisterForm = ({ prevStep, nextStep }: RegisterFormProps) => {
               required: "계좌번호를 입력하세요.",
             })}
           ></FormInput>
-          <p className="text-sm text-default relative bottom-2">
+          <p className="text-sm text-default relative bottom-2 mt-2">
             (대표자와 통장 명의가 다른 경우 입금되지 않습니다.)
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 md:gap-4">
+        <div className="grid md:grid-cols-2 md:gap-6">
           <Controller
             control={control}
             name="bankCertFile"
@@ -461,18 +466,15 @@ const RegisterForm = ({ prevStep, nextStep }: RegisterFormProps) => {
           />
         </div>
 
-        <div className="flex justify-between mt-10">
+        <div className="flex justify-between pt-10">
           <button
             type="button"
             onClick={prevStep}
-            className="px-6 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+            className="sf-btn sf-btn--xl border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 transform transition-all duration-300 hover:scale-[1.02]"
           >
-            이전
+            이전 단계
           </button>
-          <button
-            type="submit"
-            className="px-6 py-2 rounded-md font-medium text-white bg-primary hover:bg-primary-hover"
-          >
+          <button type="submit" className="sf-btn sf-btn--primary sf-btn--xl">
             가입신청
           </button>
         </div>

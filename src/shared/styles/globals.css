@@ -1,0 +1,214 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #171717;
+  }
+
+  body {
+    @apply font-pretendard text-black bg-white;
+  }
+
+  h1 {
+    @apply font-bold text-lg;
+  }
+
+  input[type="checkbox"] {
+    @apply appearance-none cursor-pointer;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #d1d5db;
+    border-radius: 6px;
+    background: white;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+
+  input[type="checkbox"]:hover {
+    border-color: #7fc83a;
+    box-shadow: 0 2px 4px rgba(127, 200, 58, 0.2);
+  }
+
+  input[type="checkbox"]:focus {
+    outline: none;
+    border-color: #7fc83a;
+    box-shadow: 0 0 0 3px rgba(127, 200, 58, 0.1);
+  }
+
+  input[type="checkbox"]:checked {
+    background: #226032;
+    border-color: #226032;
+    box-shadow: 0 2px 4px rgba(34, 96, 50, 0.3);
+  }
+
+  input[type="checkbox"]:checked::after {
+    content: "✓";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1;
+  }
+}
+
+@layer components {
+  /* ───────── 기본 별표(*) ───────── */
+  .sf-req {
+    @apply ml-1 text-danger font-semibold align-middle;
+    /* 사용: <span class="sf-req" aria-hidden="true">*</span> */
+  }
+
+  /* ───────── 카드 ───────── */
+  .sf-card {
+    @apply bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-gray-200;
+  }
+
+  /* ───────── 칩 ───────── */
+  .sf-chip-group {
+    @apply flex flex-wrap gap-1;
+  }
+  .sf-chip {
+    @apply inline-flex items-center justify-center rounded-full
+           px-3 py-1 text-xs font-medium
+           bg-primary/5 text-primary border border-primary/20
+           hover:bg-primary/10 hover:border-primary/30
+           transition-colors duration-150
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary;
+  }
+  /* 분홍 포인트 */
+  .sf-chip[data-color="pink"] {
+    @apply bg-pink-50 text-pink-700 border-pink-200
+           hover:bg-pink-100 hover:border-pink-300
+           focus-visible:ring-pink-500;
+  }
+  /* (옵션) 뉴트럴 회색 */
+  .sf-chip[data-color="gray"] {
+    @apply bg-gray-50 text-gray-700 border-gray-200
+           hover:bg-gray-100 hover:border-gray-300
+           focus-visible:ring-gray-400;
+  }
+
+  /* ───────── 공통 버튼 ───────── */
+  /* 그룹 래퍼 */
+  .sf-btn-group {
+    @apply flex items-center gap-2;
+  }
+  /* 공통 버튼 뼈대 */
+  .sf-btn {
+    @apply inline-flex items-center justify-center rounded-lg font-medium
+           transition-all duration-200 select-none
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary
+           will-change-transform;
+  }
+
+  .sf-btn:disabled {
+    @apply opacity-50 pointer-events-none;
+  }
+  /* 타입 */
+  .sf-btn--primary {
+    @apply text-white bg-gradient-to-r from-primary to-accent
+           hover:from-primary-hover hover:to-accent hover:shadow-lg hover:scale-[1.02] active:scale-[0.98];
+  }
+  .sf-btn--secondary {
+    @apply bg-gray-100 text-gray-700 border border-gray-300
+           hover:bg-gray-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98];
+  }
+  /* 사이즈 */
+  .sf-btn--sm {
+    @apply h-8  px-3 text-sm;
+  }
+  .sf-btn--md {
+    @apply h-10 px-4;
+  }
+  .sf-btn--lg {
+    @apply h-11 px-6;
+  }
+  .sf-btn--xl {
+    @apply h-14 px-8 font-semibold rounded-2xl;
+  }
+
+  /* ───────── 이미지 버튼 ───────── */
+  .sf-btn-img--sm {
+    @apply py-0.5 rounded w-[50px] text-center font-semibold text-gray-600;
+    background: url("/images/btn_50.png") no-repeat;
+  }
+  .sf-btn-img--md {
+    @apply py-0.5 rounded w-[70px] text-center font-semibold text-gray-600;
+    background: url("/images/btn_70.png") no-repeat;
+  }
+  .sf-btn-img--lg {
+    @apply py-0.5 rounded w-[110px] text-center font-semibold text-gray-600;
+    background: url("/images/btn_110.png") no-repeat;
+  }
+
+  /* ───────── 가격 버튼 ───────── */
+  .sf-btn-price__currency {
+    @apply text-[10px] font-bold mr-1;
+  }
+  .sf-btn-price__amount {
+    @apply text-xs;
+  }
+
+  /* ───────── 테이블: 공통 ───────── */
+  .sf-table {
+    @apply w-full overflow-hidden rounded-lg bg-white;
+  }
+  .sf-table th,
+  .sf-table td {
+    @apply border-r border-gray-200 align-middle;
+  }
+  .sf-table th:last-child,
+  .sf-table td:last-child {
+    @apply border-r-0;
+  }
+  .sf-table tr {
+    @apply border-b border-gray-300 transition-colors duration-150;
+  }
+  .sf-table tr:last-child {
+    @apply border-b-0;
+  }
+  .sf-table tbody tr:hover {
+    @apply bg-gray-50/30;
+  }
+  .sf-table tbody tr:nth-child(even) {
+    @apply bg-gray-50/20;
+  }
+
+  /* ───────── 테이블 변형: 폼 ───────── */
+  .sf-table--form {
+    @apply border border-gray-300 text-xs;
+  }
+  .sf-table--form th {
+    @apply min-w-24 p-1 pl-2
+           bg-gradient-to-r from-primary/5 to-accent/5
+           text-left font-semibold text-gray-700 bg-gray-50;
+  }
+  .sf-table--form td {
+    @apply py-1 px-2;
+  }
+
+  /* ───────── 테이블 변형: 리스트 ───────── */
+  .sf-table--list {
+    @apply border border-gray-200 rounded-xl shadow-lg text-sm;
+  }
+  .sf-table--list thead {
+    @apply bg-gradient-to-r from-primary/10 to-accent/10
+           text-center border-b-2 border-primary/30;
+  }
+  .sf-table--list th {
+    @apply font-semibold text-gray-700 py-2 px-1;
+  }
+  .sf-table--list td {
+    @apply px-2 py-1;
+  }
+  .sf-table--list tbody tr:nth-child(even) {
+    /* 리스트 변형은 행 배경 톤 약간 다르게 */
+    @apply bg-gray-100/50;
+  }
+}

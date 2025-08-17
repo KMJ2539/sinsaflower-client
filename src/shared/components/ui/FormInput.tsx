@@ -12,7 +12,7 @@ const Input = React.forwardRef<HTMLInputElement, FormInputProps>(
       <div className="my-2 tracking-tight">
         <label className="text-sm">
           {label}
-          {isRequired && <abbr />}
+          {isRequired && <span className="sf-req">*</span>}
         </label>
         <div className="flex">
           <input

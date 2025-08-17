@@ -9,8 +9,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-50 py-10">
-      <div className="space-y-4 w-full px-5 md:mx-20 md:max-w-4xl ">
+    <div className="min-h-screen flex justify-center items-center bg-gray-50 py-6">
+      <div className="space-y-3 w-full px-5 md:mx-20 md:max-w-4xl ">
         {/* logo */}
         <Link href="/">
           <Image

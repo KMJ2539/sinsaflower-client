@@ -1,6 +1,18 @@
+// Modal.tsx
+"use client";
+
 import clsx from "clsx";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+
+type ModalSize = "sm" | "md" | "lg" | "xl";
+const sizeMap: Record<ModalSize, string> = {
+  sm: "max-w-md",
+  md: "max-w-lg",
+  lg: "max-w-2xl",
+  xl: "max-w-5xl",
+};
 
 type ModalProps = {
   isOpen?: boolean;
@@ -10,16 +22,8 @@ type ModalProps = {
   cancelText?: string;
   hasFooter?: boolean;
   onCancel?: () => void;
-  onConfirm?: () => void;
+  onConfirm?: () => Promise<void> | void;
   size?: ModalSize;
-};
-
-type ModalSize = "sm" | "md" | "lg" | "xl";
-const sizeMap: Record<ModalSize, string> = {
-  sm: "max-w-md",
-  md: "max-w-lg",
-  lg: "max-w-2xl",
-  xl: "max-w-5xl",
 };
 
 export default function Modal({
@@ -33,26 +37,28 @@ export default function Modal({
   onConfirm,
   size = "sm",
 }: ModalProps) {
-  if (!isOpen) return null;
-
+  const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+  if (!isOpen || !mounted) return null;
 
   const handleConfirm = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (!onConfirm) return;
 
-    if (onConfirm) {
+    try {
       setIsLoading(true);
-      console.log("isLoading?", isLoading);
-      try {
-        await onConfirm();
-      } catch (error) {
-        console.error("Error", error);
-      }
+      await onConfirm();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+  const modalUI = (
+    <div className="fixed inset-0 z-[1000] bg-black/50 flex items-center justify-center">
       <div
         className={clsx(
           "bg-white rounded-lg shadow-xl w-full p-6 relative",
@@ -60,9 +66,8 @@ export default function Modal({
         )}
       >
         {isLoading && (
-          <div className="fixed inset-0 bg-white/30 flex items-center justify-center z-100">
+          <div className="fixed inset-0 z-[1100] bg-white/30 flex items-center justify-center">
             <Image
-              className="rounded-lg w-full max-w-md p-6 relative"
               src="/icons/spinner.svg"
               width={70}
               height={70}
@@ -71,9 +76,7 @@ export default function Modal({
           </div>
         )}
         <h2 className="text-xl font-bold mb-4">{title}</h2>
-
         <div className="mb-6">{children}</div>
-
         {hasFooter && (
           <div className="flex gap-2">
             <button
@@ -93,4 +96,6 @@ export default function Modal({
       </div>
     </div>
   );
+
+  return createPortal(modalUI, document.body);
 }

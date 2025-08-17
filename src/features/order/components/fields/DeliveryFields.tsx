@@ -112,7 +112,7 @@ export default function DeliveryFields({ register }: Props) {
               {...register("deliveryPlace", { required: true })}
               className="border p-0.5 text-xs w-1/2"
             />
-            <button type="button" className="btn-md">
+            <button type="button" className="sf-btn-img--md">
               행사장 검색
             </button>
           </div>

@@ -54,42 +54,44 @@ const LoginForm = () => {
   };
 
   return (
-    <div>
-      <div className="flex flex-col justify-center items-center space-y-6">
-        <div className="w-full max-w-xl space-y-6 px-20 py-14 bg-white rounded-lg shadow-md">
-          <div>
-            <h2 className="mt-6 text-4xl font-semibold text-gray-900">
+    <div className="w-full max-w-md mx-auto">
+      {/* 로그인 폼 카드 */}
+      <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 overflow-hidden">
+        <div className="px-10 py-10">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-2">
               로그인
             </h2>
+            {/* <p className="text-sm text-gray-500">
+              계정에 로그인하여 서비스를 이용하세요
+            </p> */}
           </div>
+
           {error && (
-            <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded">
-              {error}
+            <div className="mb-6 bg-red-50 border-l-4 border-danger p-4 rounded-lg">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg
+                    className="h-5 w-5 text-danger"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
+              </div>
             </div>
           )}
 
-          <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
-            <div className="rounded-md shadow-sm space-y-4">
-              {/* <div>
-                <label
-                  htmlFor="username"
-                  className="block text-sm font-medium text-gray-900 mb-1"
-                >
-                  아이디
-                </label>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  autoComplete="username"
-                  required
-                  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-200 sm:text-sm"
-                  placeholder="아이디를 입력하세요"
-                  value={formData.username}
-                  onChange={handleChange}
-                  disabled={loading}
-                />
-              </div> */}
+          <form onSubmit={handleSubmit} className="space-y-7">
+            <div className="space-y-5">
               <FormInput
                 name="loginId"
                 label="아이디"
@@ -98,28 +100,7 @@ const LoginForm = () => {
                 onChange={handleChange}
                 disabled={loading}
                 placeholder="아이디를 입력하세요"
-              ></FormInput>
-
-              {/* <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-900 mb-1"
-                >
-                  비밀번호
-                </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-200 sm:text-sm"
-                  placeholder="비밀번호를 입력하세요"
-                  value={formData.password}
-                  onChange={handleChange}
-                  disabled={loading}
-                />
-              </div> */}
+              />
 
               <FormInput
                 name="password"
@@ -129,67 +110,103 @@ const LoginForm = () => {
                 onChange={handleChange}
                 disabled={loading}
                 placeholder="비밀번호를 입력하세요"
-              ></FormInput>
+              />
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-amber-200 focus:ring-amber-200 border-gray-300 rounded"
-                />
-                <label
-                  htmlFor="remember-me"
-                  className="ml-2 block text-sm text-gray-900"
-                >
-                  아이디 저장
-                </label>
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-primary group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-hover"
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+              />
+              <label
+                htmlFor="remember-me"
+                className="ml-3 block text-sm text-gray-600"
               >
-                {loading ? "로그인 중..." : "로그인"}
-              </button>
+                아이디 저장
+              </label>
             </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-primary to-accent text-white py-4 px-6 rounded-2xl font-semibold shadow-lg hover:shadow-xl hover:from-primary-hover hover:to-accent focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transform transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            >
+              {loading ? (
+                <div className="flex items-center justify-center">
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  로그인 중...
+                </div>
+              ) : (
+                "로그인"
+              )}
+            </button>
           </form>
 
-          <div className="text-center text-sm space-y-2 mt-4">
-            <div className="space-x-4">
-              <a href="/find-id" className="text-primary hover:underline">
+          {/* 추가 링크들 */}
+          <div className="mt-8 pt-4 border-t border-gray-100">
+            <div className="flex justify-center space-x-8 mb-4">
+              <a
+                href="/find-id"
+                className="text-sm text-gray-500 hover:text-primary transition-colors duration-200 font-medium"
+              >
                 아이디 찾기
               </a>
-              <a href="/find-password" className="text-primary hover:underline">
+              <span className="text-gray-200">|</span>
+              <a
+                href="/find-password"
+                className="text-sm text-gray-500 hover:text-primary transition-colors duration-200 font-medium"
+              >
                 비밀번호 찾기
               </a>
             </div>
-            <div className="text-gray-700">
-              아직 계정이 없으신가요?{" "}
+
+            <div className="text-center">
+              <p className="text-sm text-gray-500 mb-2">
+                아직 계정이 없으신가요?
+              </p>
               <button
                 onClick={() => router.push("/register")}
-                className="text-primary font-bold hover:underline"
+                className="text-primary font-semibold hover:text-primary-hover transition-colors duration-200 text-base"
               >
                 회원가입
               </button>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div className="mt-6 border-t border-gray-200 pt-4">
-            <p className="text-xs text-center text-gray-500">
-              가입 및 결제 관련 문의:{" "}
-              <span className="font-semibold">1670-5800</span> (평일
-              09:00-18:00)
-            </p>
-          </div>
+      {/* 하단 연락처 정보 */}
+      <div className="mt-8 text-center">
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-5 shadow-lg border border-white/20">
+          <p className="text-xs text-gray-600">
+            가입 및 결제 관련 문의: <span className="font-bold">1670-5800</span>
+          </p>
+          <p className="text-xs text-gray-500 mt-1">평일 09:00-18:00</p>
         </div>
       </div>
     </div>
   );
 };
+
 export default LoginForm;

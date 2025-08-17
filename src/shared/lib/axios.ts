@@ -1,4 +1,8 @@
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
+import axios, {
+  type AxiosRequestConfig,
+  AxiosResponse,
+  AxiosError,
+} from "axios";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";

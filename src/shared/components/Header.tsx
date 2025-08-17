@@ -26,14 +26,14 @@ const Header = async () => {
 
           <nav className="space-x-8 pl-12">
             <Link
-              href="order-form"
+              href="orders/create"
               className="text-lg font-semibold text-gray-800 hover:text-primary hover:scale-105 transition-all duration-200 relative group"
             >
               발주
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-accent transition-all duration-200 group-hover:w-full"></span>
             </Link>
             <Link
-              href="/all-orders"
+              href="/orders/sales"
               className="text-lg font-semibold text-gray-800 hover:text-primary hover:scale-105 transition-all duration-200 relative group"
             >
               주문확인
