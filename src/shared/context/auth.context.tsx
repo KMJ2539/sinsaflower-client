@@ -8,9 +8,9 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { login, register } from "@/features/auth/services/auth.service";
+import { login } from "@/features/auth/services/auth.service";
 import { User } from "../types/user";
-import { deleteCookie, setCookie } from "../lib/cookie";
+import { deleteCookie, setCookie } from "../lib/cookie.client";
 
 interface AuthContextType {
   user: User | null;

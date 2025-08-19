@@ -1,15 +1,18 @@
 import { useState } from "react";
 import {
+  Control,
+  Controller,
   UseFormRegister,
   UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
-import { OrderFormValues } from "../form/OrderForm";
+import { OrderFormValues } from "../../types/orderFormValues";
 
 interface Props {
   register: UseFormRegister<OrderFormValues>;
   setValue: UseFormSetValue<OrderFormValues>;
   watch: UseFormWatch<OrderFormValues>;
+  control: Control<OrderFormValues>;
 }
 
 const products = [
@@ -62,7 +65,12 @@ const optionItems = [
   "리본교체비",
 ];
 
-export default function ProductFields({ register, setValue, watch }: Props) {
+export default function ProductFields({
+  register,
+  setValue,
+  watch,
+  control,
+}: Props) {
   const options = watch("options") || {};
   const basePrice = watch("price") || 0;
   const [showOptions, setShowOptions] = useState(false);
@@ -307,8 +315,21 @@ export default function ProductFields({ register, setValue, watch }: Props) {
         <th>상품이미지</th>
         <td colSpan={3}>
           <div className="flex gap-1">
-            <button className="sf-btn-img--md">이미지검색</button>
-            <button className="sf-btn-img--md">이미지등록</button>
+            {/* <button className="sf-btn-img--md">이미지검색</button> */}
+            <Controller
+              control={control}
+              name="productImage"
+              render={({ field }) => (
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] ?? null;
+                    field.onChange(file);
+                  }}
+                />
+              )}
+            />
           </div>
         </td>
       </tr>

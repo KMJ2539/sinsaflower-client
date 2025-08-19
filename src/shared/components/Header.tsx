@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getUser } from "@/features/auth/services/auth.server";
+import { getUser } from "@/features/auth/server/auth.server";
 import { LogoutButton } from "@/features/auth/components/LogoutButton";
 import UserDropdown from "@/features/auth/components/UserDropDown";
 

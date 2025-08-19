@@ -1,5 +1,5 @@
 import { UseFormRegister } from "react-hook-form";
-import { OrderFormValues } from "../form/OrderForm";
+import { OrderFormValues } from "../../types/orderFormValues";
 
 interface Props {
   register: UseFormRegister<OrderFormValues>;
@@ -25,7 +25,7 @@ export default function BasicInfoFields({ register }: Props) {
       {/* 수주화원 */}
       <tr>
         <th>
-          수주화원 <span className="text-red-500">*</span>
+          수주화원<span className="sf-req">*</span>
         </th>
         <td colSpan={3} className="py-1 px-2">
           <p className="flex gap-1">

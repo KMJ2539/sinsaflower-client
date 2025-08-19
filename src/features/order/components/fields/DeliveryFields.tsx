@@ -1,11 +1,17 @@
-import { UseFormRegister } from "react-hook-form";
-import { OrderFormValues } from "../form/OrderForm";
+import { UseFormRegister, UseFormWatch } from "react-hook-form";
+import { OrderFormValues } from "../../types/orderFormValues";
 
 interface Props {
   register: UseFormRegister<OrderFormValues>;
+  watch: UseFormWatch<OrderFormValues>;
 }
 
-export default function DeliveryFields({ register }: Props) {
+export default function DeliveryFields({ register, watch }: Props) {
+  const HOURS = Array.from({ length: 16 }, (_, i) => i + 8); // 8 ~ 23
+  const MINUTES = [0, 10, 20, 30, 40, 50];
+  const deliveryHours = watch("deliveryHours");
+  const needDetail = deliveryHours && deliveryHours !== "default";
+
   return (
     <>
       {/* 배송사진 비공개 */}
@@ -82,7 +88,7 @@ export default function DeliveryFields({ register }: Props) {
       {/* 배달일시 */}
       <tr>
         <th>
-          배달일시 <span className="text-red-500">*</span>
+          배달일시<span className="sf-req">*</span>
         </th>
         <td colSpan={3}>
           <input
@@ -91,20 +97,73 @@ export default function DeliveryFields({ register }: Props) {
             className="border p-0.5 text-xs"
           />
           <select
-            {...register("deliveryTime")}
+            {...register("deliveryHours")}
             className="border p-0.5 text-xs ml-2"
           >
-            <option value="기본시간">기본시간</option>
-            <option value="오전">오전</option>
-            <option value="오후">오후</option>
+            <option value="default">기본시간</option>
+            {HOURS.map((h) => (
+              <option key={h} value={String(h)}>
+                {h}시
+              </option>
+            ))}
           </select>
+
+          {/* 기본시간이 아닌 경우: 디테일 영역 */}
+          {needDetail && (
+            <div className="inline-flex items-center gap-2 ml-2">
+              <select
+                {...register("deliveryMinutes", {
+                  required: needDetail,
+                  valueAsNumber: true,
+                })}
+                className="border p-0.5 text-xs"
+                defaultValue={0}
+              >
+                {MINUTES.map((m) => (
+                  <option key={m} value={m}>
+                    {String(m).padStart(2, "0")}분
+                  </option>
+                ))}
+              </select>
+
+              <select {...register("deliveryType")} className="border p-0.5">
+                <option value="까지">까지</option>
+                <option value="예식">예식</option>
+                <option value="행사">행사</option>
+              </select>
+
+              <span className="ml-2">행사시간:</span>
+              <select
+                {...register("eventHours", { valueAsNumber: true })}
+                className="border p-0.5 text-xs"
+                defaultValue={0}
+              >
+                {HOURS.map((h) => (
+                  <option key={h} value={h}>
+                    {h}시
+                  </option>
+                ))}
+              </select>
+              <select
+                {...register("eventMinutes", { valueAsNumber: true })}
+                className="border p-0.5 text-xs"
+                defaultValue={0}
+              >
+                {MINUTES.map((m) => (
+                  <option key={m} value={m}>
+                    {String(m).padStart(2, "0")}분
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </td>
       </tr>
 
       {/* 배달장소 */}
       <tr>
         <th>
-          배달장소 <span className="text-red-500">*</span>
+          배달장소<span className="sf-req">*</span>
         </th>
         <td colSpan={3}>
           <div className="flex gap-2">

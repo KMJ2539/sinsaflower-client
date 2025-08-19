@@ -1,47 +1,12 @@
 "use client";
 
-import { Button } from "@/shared/components/ui/Button";
 import { useForm } from "react-hook-form";
 import BasicInfoFields from "../fields/BasicInfoFields";
 import ProductFields from "../fields/ProductFields";
 import DeliveryFields from "../fields/DeliveryFields";
 import MessageFields from "../fields/MessageFields";
 import AdditionalInfoFields from "../fields/AdditionalInfoFields";
-
-export type OrderFormValues = {
-  specialNote?: string;
-  florist: string;
-  region: string;
-  shopName: string;
-  phone: string;
-  productName: string;
-  productDetail?: string;
-  quantity: number;
-  originPrice: number;
-  price: number;
-  payment: number;
-  image?: File;
-  orderCustomerName?: string;
-  orderCustomerPhone?: string;
-  orderCustomerMobile?: string;
-  receiverName: string;
-  receiverPhone: string;
-  receiverMobile: string;
-  deliveryDate: string;
-  deliveryTime: string;
-  deliveryPlace: string;
-  messages: { text: string }[];
-  senderList: { name: string; card?: string; note?: string }[];
-  options?: {
-    [key: string]: {
-      checked: boolean;
-      price: number;
-    };
-  };
-  card: string;
-  request: string;
-  hideDeliveryPhoto: boolean;
-};
+import { OrderFormValues } from "../../types/orderFormValues";
 
 const OrderForm = () => {
   const { register, handleSubmit, setValue, watch, control, getValues } =
@@ -69,8 +34,9 @@ const OrderForm = () => {
             register={register}
             setValue={setValue}
             watch={watch}
+            control={control}
           />
-          <DeliveryFields register={register} />
+          <DeliveryFields register={register} watch={watch} />
           <MessageFields
             register={register}
             control={control}

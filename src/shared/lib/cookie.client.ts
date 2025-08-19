@@ -1,3 +1,5 @@
+"use client";
+
 export function setCookie(
   name: string,
   value: string,

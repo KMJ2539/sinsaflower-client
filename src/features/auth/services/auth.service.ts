@@ -1,78 +1,108 @@
-import { User } from "@/shared/types/user";
-import apiClient from "@/shared/lib/axios";
+import type { User } from "@/shared/types/user";
+import { clientRequest } from "@/shared/lib/http/client";
 
-// 클라이언트 전용 함수들
 // 로그인
 export async function login(loginId: string, password: string) {
-  console.log("AuthService: 로그인 요청", { loginId });
-  const response = await apiClient.post("/api/auth/login", {
-    loginId,
-    password,
+  return clientRequest({
+    url: "/api/auth/login",
+    method: "POST",
+    data: { loginId, password },
   });
-  console.log("AuthService: 로그인 응답", response.data);
-  return response.data;
 }
 
 // 회원가입
 export async function signup(inputs: RegisterFormInputs) {
+  const { bankCertFile, businessCertFile, ...rest } = inputs;
+
   const formData = new FormData();
-  console.log(inputs, inputs);
-
-  const { bankCertFile, businessCertFile, ...restInputs } = inputs;
-
   formData.append(
     "request",
-    new Blob([JSON.stringify(restInputs)], { type: "application/json" })
+    new Blob([JSON.stringify(rest)], { type: "application/json" })
   );
-  formData.append("bankCertFile", inputs.bankCertFile);
-  formData.append("businessCertFile", inputs.businessCertFile);
+  if (bankCertFile) formData.append("bankCertFile", bankCertFile);
+  if (businessCertFile) formData.append("businessCertFile", businessCertFile);
 
-  console.log("AuthService: 회원가입 요청", formData);
-
-  const response = await apiClient.post("/api/auth/signup", formData, {
-    headers: {},
+  return clientRequest({
+    url: "/api/auth/signup",
+    method: "POST",
+    data: formData,
+    // FormData 사용 시 Content-Type은 axios가 자동으로 설정함
   });
-
-  console.log("AuthService: 회원가입 응답", response.data);
-  return response.data;
 }
 
 // 아이디 중복 확인
 export async function checkUserId(userId: string) {
-  console.log("AuthService: 아이디 중복 확인 요청", { userId });
-  const response = await apiClient.get(
-    `/api/auth/check-userid?userId=${userId}`
-  );
-  console.log("AuthService: 아이디 중복 확인 응답", response.data);
-  return response.data;
+  return clientRequest({
+    url: "/api/auth/check-userid",
+    method: "GET",
+    params: { userId },
+  });
 }
 
 // 관리자 - 대기중인 사용자 목록 조회
 export async function getPendingUsers() {
-  console.log("AuthService: 대기중인 사용자 목록 조회");
-  const response = await apiClient.get("/api/auth/admin/pending-users");
-  console.log("AuthService: 대기중인 사용자 목록 응답", response.data);
-  return response.data;
+  return clientRequest<User[]>({
+    url: "/api/auth/admin/pending-users",
+    method: "GET",
+  });
 }
 
 // 관리자 - 사용자 승인
 export async function approveUser(userId: string) {
-  console.log("AuthService: 사용자 승인 요청", { userId });
-  const response = await apiClient.post(`/api/auth/admin/approve/${userId}`);
-  console.log("AuthService: 사용자 승인 응답", response.data);
-  return response.data;
+  return clientRequest({
+    url: `/api/auth/admin/approve/${userId}`,
+    method: "POST",
+  });
 }
 
 // 관리자 - 사용자 거부
 export async function rejectUser(userId: string, reason: string) {
-  console.log("AuthService: 사용자 거부 요청", { userId, reason });
-  const response = await apiClient.post(
-    `/api/auth/admin/reject/${userId}`,
-    null,
-    {
-      params: { reason },
-    }
-  );
-  console.log("AuthService: 사용자 거부 응답", response.data);
-  return response.data;
+  return clientRequest({
+    url: `/api/auth/admin/reject/${userId}`,
+    method: "POST",
+    params: { reason },
+  });
+}
+
+
+{
+  request  : {
+    "specialNote": "꽃다발에 리본 추가해주세요.",
+  "region": "서울 강남구",
+  "shopName": "신사플라워",
+  "phone": "02-1234-5678",
+  "productName": "장미 꽃다발",
+  "productDetail": "붉은 장미 50송이, 리본 포함",
+  "quantity": 1,
+  "originPrice": 80000,
+  "price": 75000,
+  "payment": 75000,
+  "image": null,
+  "orderCustomerName": "김주문",
+  "orderCustomerPhone": "02-8765-4321",
+  "orderCustomerMobile": "010-2222-3333",
+  "receiverName": "이수령",
+  "receiverPhone": "02-5555-7777",
+  "receiverMobile": "010-9999-8888",
+  "deliveryDate": "2025-08-15",
+  "deliveryHours" : "15",
+  "deliveryMinutes" : "30",
+  "deliveryType": "까지",
+  "eventHours": "18",
+  "eventMinutes": "00";
+  "deliveryPlace": "서울특별시 강남구 테헤란로 123",
+  "messages": [
+    { "text": "축하합니다!" },
+    { "text": "행복하세요!" }
+  ],
+  "senderList": [
+    { "name": "박보내" }
+  ],
+  "options": {
+    "케이크": { "checked": true, "price": 20000 },
+    "초": { "checked": false, "price": 0 }
+  },
+  "card": "백색 카드",
+  "request": "도착 전에 미리 전화 주세요.",
+  "hideDeliveryPhoto": false
 }
