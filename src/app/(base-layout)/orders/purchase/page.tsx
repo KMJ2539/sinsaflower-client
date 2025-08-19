@@ -1,6 +1,7 @@
 import { MonthNavigation } from "@/features/order/components/list/MonthNavigation";
-import { OrderListPageLayout } from "@/features/order/components/list/OrderListPageLayout";
+import { OrderListFilter } from "@/features/order/components/list/OrderListFilter";
 import { OrderPurchaseTable } from "@/features/order/components/table/OrderPurchaseTable";
+import { OrderSearchProvider } from "@/features/order/context/order-search.context";
 import ContentLayout from "@/shared/components/layout/ContentLayout";
 
 export default function Page() {
@@ -59,9 +60,10 @@ export default function Page() {
 
       {/* 메인 컨텐츠 */}
       <ContentLayout title="전체발주리스트" aside={<MonthNavigation />}>
-        <OrderListPageLayout>
+        <OrderSearchProvider>
+          <OrderListFilter />
           <OrderPurchaseTable />
-        </OrderListPageLayout>
+        </OrderSearchProvider>
       </ContentLayout>
     </div>
   );

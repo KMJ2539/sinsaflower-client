@@ -1,8 +1,8 @@
 import { UseFormRegister } from "react-hook-form";
-import { OrderFormValues } from "../../types/orderFormValues";
+import { OrderFormValue } from "../../types/orderFormValue";
 
 interface Props {
-  register: UseFormRegister<OrderFormValues>;
+  register: UseFormRegister<OrderFormValue>;
 }
 
 export default function BasicInfoFields({ register }: Props) {

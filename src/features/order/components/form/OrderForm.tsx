@@ -6,11 +6,11 @@ import ProductFields from "../fields/ProductFields";
 import DeliveryFields from "../fields/DeliveryFields";
 import MessageFields from "../fields/MessageFields";
 import AdditionalInfoFields from "../fields/AdditionalInfoFields";
-import { OrderFormValues } from "../../types/orderFormValues";
+import { OrderFormValue } from "../../types/orderFormValue";
 
 const OrderForm = () => {
   const { register, handleSubmit, setValue, watch, control, getValues } =
-    useForm<OrderFormValues>({
+    useForm<OrderFormValue>({
       defaultValues: {
         originPrice: 0,
         price: 0,
@@ -21,7 +21,7 @@ const OrderForm = () => {
       },
     });
 
-  const onSubmit = (data: OrderFormValues) => {
+  const onSubmit = (data: OrderFormValue) => {
     console.log("폼 제출:", data);
   };
 

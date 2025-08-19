@@ -1,29 +1,13 @@
+"use client";
+
 import TruncateText from "@/shared/components/ui/TruncateText";
 import OrderStatusTag from "../list/OrderStatusTag";
 import Image from "next/image";
-
-type OrderPurchaseValue = {
-  orderNumber: string; //주문번호
-  orderType: string; //구분(직/본)
-  orderDate: string; //주문접수일
-  orderTime: string; //주문접수시각
-  deliveryDate: string; //배송요구일
-  deliveryTime: string; //배송요구시간(기본시간, 즉시배송, 11:00...)
-  sender: string; //주문자
-  receiver: string; //받는분
-  corpName: string; //재이플라워
-  corpAddress: string; //강원 속초시
-  productName: string; //상품명
-  deliveryAddress: string; //배송지
-  originPrice: number; //원청액
-  payment: number; //결제액
-  sms: string; //문자 성공(성공/거부/실패)
-  fax: string; //팩스 성공(성공/거부/실패)
-  deliveryStatus: string; //배송상태(미확인/주문접수/배송준비/배송완료) //주문거절은?
-  consignee: string; //인수자
-  isDelivery: boolean; //배송 활성화
-  onSite: boolean; //현장 활성화
-};
+import { OrderPurchaseValue } from "../../types/orderPurchaseValue";
+import { OrderFilter } from "../../types/orderFilter";
+import { useEffect, useState } from "react";
+import { getOrders } from "../../services/order.service";
+import { useOrderSearch } from "../../context/order-search.context";
 
 const dummyData: OrderPurchaseValue[] = [
   {
@@ -161,6 +145,18 @@ const dummyData: OrderPurchaseValue[] = [
 ];
 
 export function OrderPurchaseTable() {
+  const { filter, searchSignal } = useOrderSearch();
+  const [orders, setOrders] = useState<OrderPurchaseValue[]>(dummyData);
+
+  // 서비스 붙이고나서 주석풀기
+  // useEffect(() => {
+  //   async function fetchOrders() {
+  //     const res = await getOrders(filter);
+  //     setOrders(res);
+  //   }
+  //   fetchOrders();
+  // }, [filter, searchSignal]); // 검색 버튼 눌릴 때마다 실행
+
   return (
     <div className="overflow-x-auto">
       <table className="sf-table sf-table--list">
@@ -200,7 +196,7 @@ export function OrderPurchaseTable() {
           </tr>
         </thead>
         <tbody>
-          {dummyData.map((order, i) => (
+          {orders.map((order, i) => (
             <tr key={order.orderNumber} className="text-center">
               <td className="font-medium text-gray-600 text-sm">{i + 1}</td>
               <td>

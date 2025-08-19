@@ -1,4 +1,4 @@
-export type OrderFormValues = {
+export type OrderFormValue = {
   specialNote?: string;
   region: string;
   shopName: string;

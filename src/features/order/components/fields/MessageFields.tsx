@@ -6,13 +6,13 @@ import {
   UseFormSetValue,
 } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { OrderFormValues } from "../../types/orderFormValues";
+import { OrderFormValue } from "../../types/orderFormValue";
 
 interface Props {
-  register: UseFormRegister<OrderFormValues>;
-  control: Control<OrderFormValues>;
-  setValue: UseFormSetValue<OrderFormValues>;
-  getValues: UseFormGetValues<OrderFormValues>;
+  register: UseFormRegister<OrderFormValue>;
+  control: Control<OrderFormValue>;
+  setValue: UseFormSetValue<OrderFormValue>;
+  getValues: UseFormGetValues<OrderFormValue>;
 }
 
 const messagePresets = [

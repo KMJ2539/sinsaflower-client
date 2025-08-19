@@ -1,9 +1,9 @@
 import { UseFormRegister, UseFormWatch } from "react-hook-form";
-import { OrderFormValues } from "../../types/orderFormValues";
+import { OrderFormValue } from "../../types/orderFormValue";
 
 interface Props {
-  register: UseFormRegister<OrderFormValues>;
-  watch: UseFormWatch<OrderFormValues>;
+  register: UseFormRegister<OrderFormValue>;
+  watch: UseFormWatch<OrderFormValue>;
 }
 
 export default function DeliveryFields({ register, watch }: Props) {

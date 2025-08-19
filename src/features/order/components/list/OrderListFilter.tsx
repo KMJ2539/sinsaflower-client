@@ -1,59 +1,98 @@
-import { MonthNavigation } from "./MonthNavigation";
+"use client";
 
-// app/orders/purchase/_components/OrderListFilterBar.tsx
+import { useOrderSearch } from "../../context/order-search.context";
+
 export function OrderListFilter() {
+  const { filter, setFilter, triggerSearch, resetFilter } = useOrderSearch();
+
+  const handleFilterChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFilter({ ...filter, [name]: value });
+  };
+
   return (
     <div className="space-y-8">
       {/* 메인 필터 */}
-
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <select className="border border-gray-300 py-2 px-3 rounded-lg bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
-          <option>배송요구일</option>
-          <option>주문일</option>
-          <option>배송일</option>
+        <select
+          className="sf-select"
+          name="dateField"
+          value={filter.dateField}
+          onChange={handleFilterChange}
+        >
+          <option value="">배송요구일</option>
+          <option value="">주문일</option>
+          <option value="">배송일</option>
         </select>
 
         <div className="flex items-center gap-2">
           <input
             type="date"
-            className="border border-gray-300 w-[130px] py-1.5 px-3 rounded-lg bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-            defaultValue="2025-07-01"
+            name="startDate"
+            className="sf-input--date"
+            value={filter.startDate}
+            onChange={handleFilterChange}
           />
           <span className="text-gray-500 font-medium">~</span>
           <input
             type="date"
-            className="border border-gray-300 w-[130px] py-1.5 px-3 rounded-lg bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-            defaultValue="2025-08-31"
+            name="endDate"
+            className="sf-input--date"
+            value={filter.endDate}
+            onChange={handleFilterChange}
           />
         </div>
 
-        <select className="border border-gray-300 py-2 px-3 rounded-lg bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+        <select
+          className="sf-select"
+          name="orderStatus"
+          value={filter.orderStatus}
+          onChange={handleFilterChange}
+        >
           <option>배송상태(전체)</option>
-          <option>미확인</option>
-          <option>주문접수</option>
-          <option>배송준비</option>
-          <option>배송완료</option>
-          <option>주문거절</option>
+          <option value="PENDING">미확인</option>
+          <option value="CONFIRMED">주문접수</option>
+          <option value="PREPARING">배송준비</option>
+          <option value="DELIVERED">배송완료</option>
+          <option value="CANCELED">주문거절</option>
         </select>
 
-        <select className="border border-gray-300 py-2 px-3 rounded-lg bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
-          <option>1.발주화원명</option>
-          <option>2.수주화환명</option>
+        <select
+          className="sf-select"
+          name="searchField"
+          value={filter.searchField}
+          onChange={handleFilterChange}
+        >
+          <option value="purchaseShopName">발주화원명</option>
+          <option value="salesShopName">수주화환명</option>
         </select>
+
+        <input
+          className="sf-select w-28"
+          name="searchKeyword"
+          value={filter.searchKeyword}
+          onChange={handleFilterChange}
+        />
 
         <button
           type="submit"
           className="sf-btn sf-btn--primary sf-btn--md px-6"
+          onClick={triggerSearch}
         >
           검색
         </button>
-        <button type="reset" className="sf-btn sf-btn--secondary sf-btn--md">
+        <button
+          type="reset"
+          className="sf-btn sf-btn--secondary sf-btn--md"
+          onClick={resetFilter}
+        >
           초기화
         </button>
       </div>
 
       {/* Color Notice*/}
-
       <div className="flex flex-wrap gap-4 text-xs text-gray-700 pb-2 pl-2">
         <div className="flex items-center gap-2">
           <div className="bg-gradient-to-r from-pink-300 to-pink-400 h-4 w-4 rounded-md shadow-sm" />

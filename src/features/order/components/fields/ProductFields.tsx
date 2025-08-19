@@ -6,13 +6,13 @@ import {
   UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
-import { OrderFormValues } from "../../types/orderFormValues";
+import { OrderFormValue } from "../../types/orderFormValue";
 
 interface Props {
-  register: UseFormRegister<OrderFormValues>;
-  setValue: UseFormSetValue<OrderFormValues>;
-  watch: UseFormWatch<OrderFormValues>;
-  control: Control<OrderFormValues>;
+  register: UseFormRegister<OrderFormValue>;
+  setValue: UseFormSetValue<OrderFormValue>;
+  watch: UseFormWatch<OrderFormValue>;
+  control: Control<OrderFormValue>;
 }
 
 const products = [
