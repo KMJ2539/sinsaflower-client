@@ -13,6 +13,7 @@ interface Props {
   setValue: UseFormSetValue<OrderFormValue>;
   watch: UseFormWatch<OrderFormValue>;
   control: Control<OrderFormValue>;
+  disabled?: boolean;
 }
 
 const products = [
@@ -70,6 +71,7 @@ export default function ProductFields({
   setValue,
   watch,
   control,
+  disabled = false,
 }: Props) {
   const options = watch("options") || {};
   const basePrice = watch("price") || 0;
@@ -77,6 +79,7 @@ export default function ProductFields({
 
   // 상품 선택 시 상세상품명 자동 입력
   const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (disabled) return;
     const selected = products.find((p) => p.code === e.target.value);
     setValue("productName", selected?.code || "");
     setValue("productDetail", selected?.name || "");
@@ -84,6 +87,7 @@ export default function ProductFields({
 
   // 결제금액 합산(옵션 포함)
   const calculatePayment = (newPrice?: number) => {
+    if (disabled) return;
     const price = newPrice ?? watch("price") ?? 0;
     const currentOptions = watch("options") || {};
 
@@ -99,11 +103,13 @@ export default function ProductFields({
 
   // 원청금액 클릭이벤트
   const plusOriginPrice = (num: number) => {
+    if (disabled) return;
     setValue("originPrice", watch("originPrice") + num);
   };
 
   //결제금액 클릭이벤트
   const plusPrice = (num: number) => {
+    if (disabled) return;
     setValue("price", watch("price") + num);
     calculatePayment();
   };
@@ -112,41 +118,48 @@ export default function ProductFields({
     <>
       {/* 상품명 & 상세상품명 */}
       <tr>
-        <th>
-          상품명 <span className="text-red-500">*</span>
-        </th>
+        <th>상품명 {!disabled && <span className="text-red-500">*</span>}</th>
         <td colSpan={3}>
           <div className="flex gap-3">
-            <select
-              {...register("productName", { required: true })}
-              onChange={(e) => {
-                handleProductChange(e);
-              }}
-              className="border border-gray-300 rounded p-0.5 text-xs w-30"
-            >
-              <option value="">상품을 선택하세요</option>
-              {products.map((p) => (
-                <option key={p.code} value={p.code}>
-                  [{p.code}] {p.name}
-                </option>
-              ))}
-            </select>
+            {disabled ? (
+              <input
+                {...register("productName")}
+                className="border border-gray-300 rounded p-0.5 text-xs w-30 bg-gray-100"
+                disabled
+              />
+            ) : (
+              <select
+                {...register("productName", { required: true })}
+                onChange={(e) => {
+                  handleProductChange(e);
+                }}
+                className="border border-gray-300 rounded p-0.5 text-xs w-30"
+                disabled={disabled}
+              >
+                <option value="">상품을 선택하세요</option>
+                {products.map((p) => (
+                  <option key={p.code} value={p.code}>
+                    [{p.code}] {p.name}
+                  </option>
+                ))}
+              </select>
+            )}
             <div className="flex items-center gap-1">
               <p>상세상품명</p>
               <input
                 {...register("productDetail")}
                 className="border border-gray-300 rounded p-0.5 text-xs w-30"
+                disabled={disabled}
               />
             </div>
             <div className="flex items-center gap-1">
-              <p>
-                수량<span className="sf-req">*</span>
-              </p>
+              <p>수량{!disabled && <span className="sf-req">*</span>}</p>
               <input
                 type="number"
                 {...register("quantity", { valueAsNumber: true })}
                 className="border border-gray-300 rounded p-0.5 text-xs w-12"
                 min={1}
+                disabled={disabled}
               />
             </div>
           </div>
@@ -157,43 +170,56 @@ export default function ProductFields({
       <tr>
         <th>원청금액</th>
         <td colSpan={3}>
-          <input
-            type="number"
-            {...register("originPrice", { valueAsNumber: true })}
-            className="border border-gray-300 rounded p-0.5 text-xs w-28 mr-1"
-          />
-          <button
-            type="button"
-            className="sf-btn-img--sm"
-            onClick={() => plusOriginPrice(10000)}
-          >
-            <span className="sf-btn-price__currency">₩</span>
-            <span className="sf-btn-price__amount">1만</span>
-          </button>
-          <button
-            type="button"
-            className="sf-btn-img--sm"
-            onClick={() => plusOriginPrice(60000)}
-          >
-            <span className="sf-btn-price__currency">₩</span>
-            <span className="sf-btn-price__amount">6만</span>
-          </button>
-          <button
-            type="button"
-            className="sf-btn-img--sm"
-            onClick={() => plusOriginPrice(70000)}
-          >
-            <span className="sf-btn-price__currency">₩</span>
-            <span className="sf-btn-price__amount">7만</span>
-          </button>
-          <button
-            type="button"
-            className="sf-btn-img--sm"
-            onClick={() => plusOriginPrice(80000)}
-          >
-            <span className="sf-btn-price__currency">₩</span>
-            <span className="sf-btn-price__amount">8만</span>
-          </button>
+          {disabled ? (
+            <span className="font-semibold text-gray-700">
+              {watch("originPrice")?.toLocaleString()} 원
+            </span>
+          ) : (
+            <>
+              <input
+                type="number"
+                {...register("originPrice", { valueAsNumber: true })}
+                className="border border-gray-300 rounded p-0.5 text-xs w-28 mr-1"
+                disabled={disabled}
+              />
+              <button
+                type="button"
+                className="sf-btn-img--sm"
+                onClick={() => plusOriginPrice(10000)}
+                disabled={disabled}
+              >
+                <span className="sf-btn-price__currency">₩</span>
+                <span className="sf-btn-price__amount">1만</span>
+              </button>
+              <button
+                type="button"
+                className="sf-btn-img--sm"
+                onClick={() => plusOriginPrice(60000)}
+                disabled={disabled}
+              >
+                <span className="sf-btn-price__currency">₩</span>
+                <span className="sf-btn-price__amount">6만</span>
+              </button>
+              <button
+                type="button"
+                className="sf-btn-img--sm"
+                onClick={() => plusOriginPrice(70000)}
+                disabled={disabled}
+              >
+                <span className="sf-btn-price__currency">₩</span>
+                <span className="sf-btn-price__amount">7만</span>
+              </button>
+              <button
+                type="button"
+                className="sf-btn-img--sm"
+                onClick={() => plusOriginPrice(80000)}
+                disabled={disabled}
+              >
+                <span className="sf-btn-price__currency">₩</span>
+                <span className="sf-btn-price__amount">8만</span>
+              </button>
+            </>
+          )}
         </td>
       </tr>
 
@@ -203,48 +229,62 @@ export default function ProductFields({
         <td colSpan={3}>
           <div className="flex gap-2">
             <div>
-              <input
-                type="number"
-                {...register("price", { valueAsNumber: true })}
-                onChange={(e) => {
-                  const value = Number(e.target.value) || 0;
-                  setValue("price", value);
-                  calculatePayment(value); // price 입력 시 즉시 계산
-                }}
-                className="border border-gray-300 rounded p-0.5 text-xs w-28 mr-1"
-              />
-              <button
-                type="button"
-                className="sf-btn-img--sm"
-                onClick={() => plusPrice(10000)}
-              >
-                <span className="sf-btn-price__currency">₩</span>
-                <span className="sf-btn-price__amount">1만</span>
-              </button>
-              <button
-                type="button"
-                className="sf-btn-img--sm"
-                onClick={() => plusPrice(60000)}
-              >
-                <span className="sf-btn-price__currency">₩</span>
-                <span className="sf-btn-price__amount">6만</span>
-              </button>
-              <button
-                type="button"
-                className="sf-btn-img--sm"
-                onClick={() => plusPrice(70000)}
-              >
-                <span className="sf-btn-price__currency">₩</span>
-                <span className="sf-btn-price__amount">7만</span>
-              </button>
-              <button
-                type="button"
-                className="sf-btn-img--sm"
-                onClick={() => plusPrice(80000)}
-              >
-                <span className="sf-btn-price__currency">₩</span>
-                <span className="sf-btn-price__amount">8만</span>
-              </button>
+              {disabled ? (
+                <span className="font-semibold text-gray-700">
+                  {watch("price")?.toLocaleString()} 원
+                </span>
+              ) : (
+                <>
+                  <input
+                    type="number"
+                    {...register("price", { valueAsNumber: true })}
+                    onChange={(e) => {
+                      if (disabled) return;
+                      const value = Number(e.target.value) || 0;
+                      setValue("price", value);
+                      calculatePayment(value); // price 입력 시 즉시 계산
+                    }}
+                    className="border border-gray-300 rounded p-0.5 text-xs w-28 mr-1"
+                    disabled={disabled}
+                  />
+                  <button
+                    type="button"
+                    className="sf-btn-img--sm"
+                    onClick={() => plusPrice(10000)}
+                    disabled={disabled}
+                  >
+                    <span className="sf-btn-price__currency">₩</span>
+                    <span className="sf-btn-price__amount">1만</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="sf-btn-img--sm"
+                    onClick={() => plusPrice(60000)}
+                    disabled={disabled}
+                  >
+                    <span className="sf-btn-price__currency">₩</span>
+                    <span className="sf-btn-price__amount">6만</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="sf-btn-img--sm"
+                    onClick={() => plusPrice(70000)}
+                    disabled={disabled}
+                  >
+                    <span className="sf-btn-price__currency">₩</span>
+                    <span className="sf-btn-price__amount">7만</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="sf-btn-img--sm"
+                    onClick={() => plusPrice(80000)}
+                    disabled={disabled}
+                  >
+                    <span className="sf-btn-price__currency">₩</span>
+                    <span className="sf-btn-price__amount">8만</span>
+                  </button>
+                </>
+              )}
             </div>
             <div className="flex items-center gap-1 ml-2">
               <input
@@ -252,10 +292,12 @@ export default function ProductFields({
                 checked={showOptions}
                 onChange={() => {
                   setShowOptions((prev) => !prev);
-                  calculatePayment();
+                  if (!disabled) {
+                    calculatePayment();
+                  }
                 }}
               />
-              <label>옵션상품 추가</label>
+              <label>{disabled ? "옵션상품 보기" : "옵션상품 추가"}</label>
             </div>
           </div>
         </td>
@@ -271,10 +313,13 @@ export default function ProductFields({
                 <label key={item} className="flex items-center gap-1">
                   <input
                     type="checkbox"
+                    checked={options[item]?.checked || false}
                     onChange={(e) => {
+                      if (disabled) return;
                       setValue(`options.${item}.checked`, e.target.checked);
                       calculatePayment(); // 체크박스 클릭 시 계산
                     }}
+                    disabled={disabled}
                   />
                   <input
                     type="number"
@@ -282,6 +327,7 @@ export default function ProductFields({
                       valueAsNumber: true,
                     })}
                     onChange={(e) => {
+                      if (disabled) return;
                       setValue(
                         `options.${item}.price`,
                         Number(e.target.value) || 0
@@ -289,6 +335,7 @@ export default function ProductFields({
                       calculatePayment(); // 옵션 금액 입력 시 계산
                     }}
                     className="border border-gray-300 rounded p-0.5 text-xs w-16"
+                    disabled={disabled}
                   />
                   <span>{item}</span>
                 </label>
@@ -302,12 +349,19 @@ export default function ProductFields({
       <tr>
         <th>결제액(옵션 포함)</th>
         <td colSpan={3}>
-          <input
-            type="number"
-            {...register("payment")}
-            readOnly
-            className="border border-gray-300 rounded p-0.5 text-xs w-full bg-gray-100"
-          />
+          {disabled ? (
+            <span className="font-semibold text-gray-700">
+              {watch("payment")?.toLocaleString()} 원
+            </span>
+          ) : (
+            <input
+              type="number"
+              {...register("payment")}
+              readOnly
+              className="border border-gray-300 rounded p-0.5 text-xs w-full bg-gray-100"
+              disabled={disabled}
+            />
+          )}
         </td>
       </tr>
 
@@ -315,21 +369,31 @@ export default function ProductFields({
         <th>상품이미지</th>
         <td colSpan={3}>
           <div className="flex gap-1">
-            {/* <button className="sf-btn-img--md">이미지검색</button> */}
-            <Controller
-              control={control}
-              name="productImage"
-              render={({ field }) => (
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0] ?? null;
-                    field.onChange(file);
-                  }}
-                />
-              )}
-            />
+            {disabled ? (
+              <button
+                type="button"
+                className="px-4 py-2 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200"
+              >
+                이미지보기
+              </button>
+            ) : (
+              <Controller
+                control={control}
+                name="productImage"
+                render={({ field }) => (
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      if (disabled) return;
+                      const file = e.target.files?.[0] ?? null;
+                      field.onChange(file);
+                    }}
+                    disabled={disabled}
+                  />
+                )}
+              />
+            )}
           </div>
         </td>
       </tr>

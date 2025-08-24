@@ -1,8 +1,13 @@
 "use client";
 
 import { useOrderSearch } from "../../context/order-search.context";
+import { OrderStatus } from "../../types/orderStatus";
 
-export function OrderListFilter() {
+export function OrderListFilter({
+  fixedStatus,
+}: {
+  fixedStatus?: OrderStatus;
+}) {
   const { filter, setFilter, triggerSearch, resetFilter } = useOrderSearch();
 
   const handleFilterChange = (
@@ -15,7 +20,7 @@ export function OrderListFilter() {
   return (
     <div className="space-y-8">
       {/* 메인 필터 */}
-      <div className="flex flex-wrap items-center gap-3 text-sm">
+      <div className="flex flex-wrap items-center gap-2 text-sm">
         <select
           className="sf-select"
           name="dateField"
@@ -27,7 +32,7 @@ export function OrderListFilter() {
           <option value="">배송일</option>
         </select>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <input
             type="date"
             name="startDate"
@@ -45,19 +50,21 @@ export function OrderListFilter() {
           />
         </div>
 
-        <select
-          className="sf-select"
-          name="orderStatus"
-          value={filter.orderStatus}
-          onChange={handleFilterChange}
-        >
-          <option>배송상태(전체)</option>
-          <option value="PENDING">미확인</option>
-          <option value="CONFIRMED">주문접수</option>
-          <option value="PREPARING">배송준비</option>
-          <option value="DELIVERED">배송완료</option>
-          <option value="CANCELED">주문거절</option>
-        </select>
+        {!fixedStatus && (
+          <select
+            className="sf-select"
+            name="orderStatus"
+            value={filter.orderStatus}
+            onChange={handleFilterChange}
+          >
+            <option>배송상태(전체)</option>
+            <option value="PENDING">미확인</option>
+            <option value="CONFIRMED">주문접수</option>
+            <option value="PREPARING">배송준비</option>
+            <option value="DELIVERED">배송완료</option>
+            <option value="CANCELED">주문거절</option>
+          </select>
+        )}
 
         <select
           className="sf-select"

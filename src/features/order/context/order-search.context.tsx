@@ -8,6 +8,7 @@ import React, {
   useState,
 } from "react";
 import { OrderFilter } from "../types/orderFilter";
+import { OrderStatus } from "../types/orderStatus";
 
 type OrderSearchCtx = {
   filter: OrderFilter;
@@ -34,16 +35,22 @@ export function OrderSearchProvider({
   children,
   initialFilter = defaultOrderFilter,
   autoSearchOnMount = true,
+  fixedStatus,
 }: {
   children: React.ReactNode;
   initialFilter?: OrderFilter;
   autoSearchOnMount?: boolean;
+  fixedStatus?: OrderStatus;
 }) {
-  const [filter, setFilter] = useState<OrderFilter>(initialFilter);
+  const [filter, setFilter] = useState<OrderFilter>({
+    ...initialFilter,
+    orderStatus: fixedStatus,
+  });
   const [searchSignal, setSearchSignal] = useState(0);
 
   const triggerSearch = () => setSearchSignal((s) => s + 1);
-  const resetFilter = () => setFilter(initialFilter);
+  const resetFilter = () =>
+    setFilter({ ...initialFilter, orderStatus: fixedStatus });
 
   useEffect(() => {
     if (autoSearchOnMount) triggerSearch();

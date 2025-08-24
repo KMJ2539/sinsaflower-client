@@ -5,10 +5,11 @@ import { OrderStatus } from "@/features/order/types/orderStatus";
 import ContentLayout from "@/shared/components/layout/ContentLayout";
 
 export default function Page() {
+  const fixedStatus: OrderStatus = "PENDING";
   return (
-    <ContentLayout title="전체수주리스트">
-      <OrderSearchProvider>
-        <OrderListFilter />
+    <ContentLayout title="미확인주문리스트">
+      <OrderSearchProvider fixedStatus={fixedStatus}>
+        <OrderListFilter fixedStatus={fixedStatus} />
         <OrderPendingTable />
       </OrderSearchProvider>
     </ContentLayout>

@@ -13,6 +13,7 @@ interface Props {
   control: Control<OrderFormValue>;
   setValue: UseFormSetValue<OrderFormValue>;
   getValues: UseFormGetValues<OrderFormValue>;
+  disabled?: boolean;
 }
 
 const messagePresets = [
@@ -31,6 +32,7 @@ export default function MessageFields({
   control,
   setValue,
   getValues,
+  disabled = false,
 }: Props) {
   const { fields, append, remove } = useFieldArray({
     control,
@@ -46,6 +48,7 @@ export default function MessageFields({
 
   // ✅ 버튼 클릭 시 마지막 포커스된 input에 값 추가
   const handlePresetClick = (msg: string) => {
+    if (disabled) return;
     const index = focusedIndex ?? 0;
     const fieldName = `messages.${index}.text` as const;
     const currentValue = getValues(fieldName) || ""; // 현재 값 가져오기
@@ -57,62 +60,78 @@ export default function MessageFields({
       <th>경조사어</th>
       <td colSpan={3}>
         {/* 한자 버튼 */}
-        <div className="sf-chip-group mb-2">
-          {messagePresets.map((m) => (
-            <button
-              key={`hanja-${m.hanja || m.hangul}`}
-              type="button"
-              data-color="pink"
-              onClick={() => handlePresetClick(m.hanja)}
-              className="sf-chip"
-            >
-              {m.hanja}
-            </button>
-          ))}
-        </div>
+        {!disabled && (
+          <div className="sf-chip-group mb-2">
+            {messagePresets.map((m) => (
+              <button
+                key={`hanja-${m.hanja || m.hangul}`}
+                type="button"
+                data-color="pink"
+                onClick={() => handlePresetClick(m.hanja)}
+                className="sf-chip"
+                disabled={disabled}
+              >
+                {m.hanja}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* 한글 버튼 */}
-        <div className="sf-chip-group mb-2">
-          {messagePresets.map((m) => (
-            <button
-              key={`hangul-${m.hangul}`}
-              type="button"
-              data-color="pink"
-              onClick={() => handlePresetClick(m.hangul)}
-              className="sf-chip"
-            >
-              {m.hangul}
-            </button>
-          ))}
-        </div>
+        {!disabled && (
+          <div className="sf-chip-group mb-2">
+            {messagePresets.map((m) => (
+              <button
+                key={`hangul-${m.hangul}`}
+                type="button"
+                data-color="pink"
+                onClick={() => handlePresetClick(m.hangul)}
+                className="sf-chip"
+                disabled={disabled}
+              >
+                {m.hangul}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* 추가 버튼 */}
-        <button
-          type="button"
-          onClick={() => append({ text: "" })} // ✅ 객체 형태로 추가
-          className="sf-btn-img--lg mb-2"
-        >
-          경조사어 추가
-        </button>
+        {!disabled && (
+          <button
+            type="button"
+            onClick={() => {
+              if (!disabled) append({ text: "" });
+            }}
+            className="sf-btn-img--lg mb-2"
+            disabled={disabled}
+          >
+            경조사어 추가
+          </button>
+        )}
 
         {/* 입력 필드 */}
         <div className="space-y-1">
           {fields.map((field, index) => (
-            <div key={field.id} className="flex items-center gap-2">
-              <span className="text-xs w-4 text-left pl-2">{index + 1}.</span>
+            <div key={field.id} className="flex gap-2 items-center">
+              {fields.length > 1 && (
+                <span className="text-xs w-4 text-left pl-2">{index + 1}.</span>
+              )}
               <input
-                {...register(`messages.${index}.text` as const)}
-                onFocus={() => setFocusedIndex(index)}
+                {...register(`messages.${index}.text`)}
                 className="border p-0.5 text-xs flex-1"
                 placeholder="경조사어 입력"
+                disabled={disabled}
               />
-              <button
-                type="button"
-                onClick={() => remove(index)}
-                className="sf-btn-img--sm"
-              >
-                삭제
-              </button>
+              {!disabled && (
+                <button
+                  type="button"
+                  onClick={() => remove(index)}
+                  className="sf-btn-img--sm"
+                  disabled={disabled}
+                >
+                  삭제
+                </button>
+              )}
             </div>
           ))}
         </div>

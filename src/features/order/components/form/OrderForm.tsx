@@ -8,7 +8,19 @@ import MessageFields from "../fields/MessageFields";
 import AdditionalInfoFields from "../fields/AdditionalInfoFields";
 import { OrderFormValue } from "../../types/orderFormValue";
 
-const OrderForm = () => {
+interface OrderFormProps {
+  mode?: "create" | "view";
+  initialData?: Partial<OrderFormValue>;
+  orderNumber?: string;
+}
+
+const OrderForm = ({
+  mode = "create",
+  initialData,
+  orderNumber,
+}: OrderFormProps) => {
+  const isViewMode = mode === "view";
+
   const { register, handleSubmit, setValue, watch, control, getValues } =
     useForm<OrderFormValue>({
       defaultValues: {
@@ -18,47 +30,72 @@ const OrderForm = () => {
         quantity: 1,
         senderList: [{}],
         messages: [{}],
+        ...initialData,
       },
     });
 
   const onSubmit = (data: OrderFormValue) => {
+    if (isViewMode) return;
     console.log("폼 제출:", data);
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      {isViewMode && (
+        <div className="mb-4">
+          <h2 className="text-xl font-bold text-gray-800">주문정보</h2>
+          {orderNumber && (
+            <p className="text-sm text-gray-600 mt-1">
+              주문번호: {orderNumber}
+            </p>
+          )}
+        </div>
+      )}
+
       <table className="sf-table sf-table--form">
         <tbody>
-          <BasicInfoFields register={register} />
+          <BasicInfoFields register={register} disabled={isViewMode} />
           <ProductFields
             register={register}
             setValue={setValue}
             watch={watch}
             control={control}
+            disabled={isViewMode}
           />
-          <DeliveryFields register={register} watch={watch} />
+          <DeliveryFields
+            register={register}
+            watch={watch}
+            disabled={isViewMode}
+          />
           <MessageFields
             register={register}
             control={control}
             setValue={setValue}
             getValues={getValues}
+            disabled={isViewMode}
           />
-          <AdditionalInfoFields register={register} control={control} />
+          <AdditionalInfoFields
+            register={register}
+            control={control}
+            disabled={isViewMode}
+          />
         </tbody>
       </table>
 
-      <div className="w-full m-auto flex gap-3 text-sm justify-center my-6">
-        <button type="submit" className="sf-btn sf-btn--primary sf-btn--md">
-          발주하기
-        </button>
-        <button
-          type="button"
-          className="sf-btn sf-btn--secondary sf-btn--md"
-          onClick={() => alert("미리보기")}
-        >
-          미리보기
-        </button>
-      </div>
+      {!isViewMode && (
+        <div className="w-full m-auto flex gap-3 text-sm justify-center my-6">
+          <button type="submit" className="sf-btn sf-btn--primary sf-btn--md">
+            발주하기
+          </button>
+          <button
+            type="button"
+            className="sf-btn sf-btn--secondary sf-btn--md"
+            onClick={() => alert("미리보기")}
+          >
+            미리보기
+          </button>
+        </div>
+      )}
     </form>
   );
 };

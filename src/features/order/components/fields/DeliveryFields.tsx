@@ -4,9 +4,14 @@ import { OrderFormValue } from "../../types/orderFormValue";
 interface Props {
   register: UseFormRegister<OrderFormValue>;
   watch: UseFormWatch<OrderFormValue>;
+  disabled?: boolean;
 }
 
-export default function DeliveryFields({ register, watch }: Props) {
+export default function DeliveryFields({
+  register,
+  watch,
+  disabled = false,
+}: Props) {
   const HOURS = Array.from({ length: 16 }, (_, i) => i + 8); // 8 ~ 23
   const MINUTES = [0, 10, 20, 30, 40, 50];
   const deliveryHours = watch("deliveryHours");
@@ -19,7 +24,11 @@ export default function DeliveryFields({ register, watch }: Props) {
         <th>배송사진 비공개</th>
         <td colSpan={3}>
           <label className="flex items-center gap-2">
-            <input type="checkbox" {...register("hideDeliveryPhoto")} />
+            <input
+              type="checkbox"
+              {...register("hideDeliveryPhoto")}
+              disabled={disabled}
+            />
             비공개
           </label>
         </td>
@@ -32,6 +41,7 @@ export default function DeliveryFields({ register, watch }: Props) {
           <input
             {...register("orderCustomerName")}
             className="border p-0.5 text-xs w-full"
+            disabled={disabled}
           />
         </td>
         <th>
@@ -41,6 +51,7 @@ export default function DeliveryFields({ register, watch }: Props) {
           <input
             {...register("receiverName", { required: true })}
             className="border p-0.5 text-xs w-full"
+            disabled={disabled}
           />
         </td>
       </tr>
@@ -52,6 +63,7 @@ export default function DeliveryFields({ register, watch }: Props) {
           <input
             {...register("orderCustomerPhone")}
             className="border p-0.5 text-xs w-full"
+            disabled={disabled}
           />
         </td>
         <th>
@@ -61,6 +73,7 @@ export default function DeliveryFields({ register, watch }: Props) {
           <input
             {...register("receiverPhone", { required: true })}
             className="border p-0.5 text-xs w-full"
+            disabled={disabled}
           />
         </td>
       </tr>
@@ -72,6 +85,7 @@ export default function DeliveryFields({ register, watch }: Props) {
           <input
             {...register("orderCustomerMobile")}
             className="border p-0.5 text-xs w-full"
+            disabled={disabled}
           />
         </td>
         <th>
@@ -81,24 +95,25 @@ export default function DeliveryFields({ register, watch }: Props) {
           <input
             {...register("receiverMobile", { required: true })}
             className="border p-0.5 text-xs w-full"
+            disabled={disabled}
           />
         </td>
       </tr>
 
       {/* 배달일시 */}
       <tr>
-        <th>
-          배달일시<span className="sf-req">*</span>
-        </th>
+        <th>배달일시{!disabled && <span className="sf-req">*</span>}</th>
         <td colSpan={3}>
           <input
             type="date"
             {...register("deliveryDate", { required: true })}
             className="border p-0.5 text-xs"
+            disabled={disabled}
           />
           <select
             {...register("deliveryHours")}
             className="border p-0.5 text-xs ml-2"
+            disabled={disabled}
           >
             <option value="default">기본시간</option>
             {HOURS.map((h) => (
@@ -118,6 +133,7 @@ export default function DeliveryFields({ register, watch }: Props) {
                 })}
                 className="border p-0.5 text-xs"
                 defaultValue={0}
+                disabled={disabled}
               >
                 {MINUTES.map((m) => (
                   <option key={m} value={m}>
@@ -125,8 +141,11 @@ export default function DeliveryFields({ register, watch }: Props) {
                   </option>
                 ))}
               </select>
-
-              <select {...register("deliveryType")} className="border p-0.5">
+              <select
+                {...register("deliveryType")}
+                className="border p-0.5"
+                disabled={disabled}
+              >
                 <option value="까지">까지</option>
                 <option value="예식">예식</option>
                 <option value="행사">행사</option>
@@ -137,6 +156,7 @@ export default function DeliveryFields({ register, watch }: Props) {
                 {...register("eventHours", { valueAsNumber: true })}
                 className="border p-0.5 text-xs"
                 defaultValue={0}
+                disabled={disabled}
               >
                 {HOURS.map((h) => (
                   <option key={h} value={h}>
@@ -148,6 +168,7 @@ export default function DeliveryFields({ register, watch }: Props) {
                 {...register("eventMinutes", { valueAsNumber: true })}
                 className="border p-0.5 text-xs"
                 defaultValue={0}
+                disabled={disabled}
               >
                 {MINUTES.map((m) => (
                   <option key={m} value={m}>
@@ -162,16 +183,19 @@ export default function DeliveryFields({ register, watch }: Props) {
 
       {/* 배달장소 */}
       <tr>
-        <th>
-          배달장소<span className="sf-req">*</span>
-        </th>
+        <th>배달장소{!disabled && <span className="sf-req">*</span>}</th>
         <td colSpan={3}>
           <div className="flex gap-2">
             <input
               {...register("deliveryPlace", { required: true })}
               className="border p-0.5 text-xs w-1/2"
+              disabled={disabled}
             />
-            <button type="button" className="sf-btn-img--md">
+            <button
+              type="button"
+              className="sf-btn-img--md"
+              disabled={disabled}
+            >
               행사장 검색
             </button>
           </div>
