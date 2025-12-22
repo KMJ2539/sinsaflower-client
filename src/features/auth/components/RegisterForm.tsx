@@ -145,7 +145,9 @@ const RegisterForm = ({ prevStep, nextStep }: RegisterFormProps) => {
   const handleSearchRegionSave = () => {};
 
   /* 배송가능지역 저장 핸들러 */
-  const handleDeliveryRegionSave = () => {};
+  const handleDeliveryRegionSave = () => {
+    console.log("배송지역 저장");
+  };
 
   return (
     <div>

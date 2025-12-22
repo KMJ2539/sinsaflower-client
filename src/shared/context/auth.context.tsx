@@ -8,7 +8,7 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { login } from "@/features/auth/services/auth.service";
+import { login as loginService } from "@/features/auth/services/auth.service";
 import { User } from "../types/user";
 import { deleteCookie, setCookie } from "../lib/cookie.client";
 
@@ -134,7 +134,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const login = async (username: string, password: string) => {
     setLoading(true);
     try {
-      const response = await login(username, password);
+      console.log("로그인 시도:", username);
+      console.log("로그인 시도:", password);
+      const response = await loginService(username, password);
 
       // 백엔드 응답을 프론트엔드 형태로 매핑 (더미데이터 없이)
       const user = {

@@ -5,8 +5,7 @@ import axios, {
   AxiosResponse,
 } from "axios";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:80";
 
 /**
  * 클라이언트 전용 axios 인스턴스

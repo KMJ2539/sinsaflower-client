@@ -1,67 +1,98 @@
 "use client";
-
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import { clientRequest } from "@/shared/lib/http/client";
 import { useRouter } from "next/navigation";
+
+type UserStatus = "ACTIVE" | "SUSPENDED";
+type UserRole = "USER" | "ADMIN";
 
 type PendingMember = {
   id: string;
+  loginId: string;
   shopName: string;
   ownerName: string;
-  businessNumber: string;
+  email: string;
+  phone: string;
   region: string;
-  phone?: string;
+  role: UserRole;
+  status: UserStatus;
   createdAt: string;
+  lastLogin?: string;
+  address?: string;
   bizCertImageUrl?: string;
+  memo?: string;
+  mobile?: string;
+  nickname?: string;
+  name?: string;
+
+  businessProfile?: {
+    approvalStatus?: string;
+    businessNumber?: string;
+    corpName?: string;
+    ceoName?: string;
+    businessType?: string;
+    businessItem?: string;
+  };
+
+  officeAddress?: {
+    sido?: string;
+    sigungu?: string;
+    detail?: string;
+    zipcode?: string;
+  };
 };
 
 export default function MemberApprovalsPage() {
   const router = useRouter();
-  const initialList = useMemo<PendingMember[]>(
-    () => [
-      {
-        id: "M-10021",
-        shopName: "채플꽃화",
-        ownerName: "김채플",
-        businessNumber: "123-45-67890",
-        region: "서울 강남구",
-        phone: "010-1234-5678",
-        createdAt: "2025-12-18 09:20",
-        bizCertImageUrl: "/images/sample-bizcert.png",
-      },
-      {
-        id: "M-10022",
-        shopName: "앨로플라워",
-        ownerName: "이앨로",
-        businessNumber: "210-33-99887",
-        region: "부산 해운대구",
-        phone: "010-2222-3333",
-        createdAt: "2025-12-18 10:05",
-        bizCertImageUrl: "/images/sample-bizcert.png",
-      },
-      {
-        id: "M-10023",
-        shopName: "루비플라워",
-        ownerName: "박루비",
-        businessNumber: "119-77-66554",
-        region: "대전 유성구",
-        phone: "010-9876-5432",
-        createdAt: "2025-12-18 10:30",
-        bizCertImageUrl: "/images/sample-bizcert.png",
-      },
-    ],
-    []
-  );
-
-  const [list, setList] = useState<PendingMember[]>(initialList);
+  const [list, setList] = useState<PendingMember[]>([]);
   const [selected, setSelected] = useState<PendingMember | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const approve = () => {
+  const fetchUsers = async () => {
+    try {
+      const res = await clientRequest<{
+        code: number;
+        message: string;
+        data: {
+          content: PendingMember[];
+        };
+        timestamp: string;
+      }>({
+        method: "GET",
+        url: "/api/admin/members/pending",
+      });
+      console.log("users data:", res);
+      console.log("users isArray:", Array.isArray(res.data));
+      console.log("first user:", res.data?.[0]);
+      setList(res.data); // ⭐ 핵심
+    } catch (err) {
+      setError("데이터 로드 실패");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const approve = async () => {
     if (!selected) return;
-    console.log("APPROVE", selected.id);
-    setList((prev) => prev.filter((m) => m.id !== selected.id));
-    setSelected(null);
+
+    try {
+      const res = await clientRequest({
+        method: "POST",
+        url: `/api/admin/members/${selected.id}/approve`,
+      });
+      alert(res.message || "승인하였습니다.");
+      await fetchUsers();
+    } catch (err) {
+      setError("승인 처리 실패");
+    } finally {
+      setSelected(null);
+    }
   };
 
   const blacklist = () => {
@@ -71,15 +102,30 @@ export default function MemberApprovalsPage() {
     setSelected(null);
   };
 
-  const reject = () => {
+  const reject = async () => {
     if (!selected) return;
     if (!rejectReason.trim()) {
       setError("거부 사유를 입력하세요.");
       return;
     }
     console.log("REJECT", selected.id, rejectReason);
-    setList((prev) => prev.filter((m) => m.id !== selected.id));
-    setSelected(null);
+    if (!selected) return;
+
+    try {
+      await clientRequest({
+        method: "POST",
+        url: `/api/admin/members/${selected.id}/reject`,
+        data: {
+          reason: rejectReason,
+        },
+      });
+      alert(res.message || "거절하였습니다.");
+      await fetchUsers();
+    } catch (err) {
+      setError("거부 처리 실패");
+    } finally {
+      setSelected(null);
+    }
     setRejectReason("");
     setError("");
   };
@@ -88,8 +134,12 @@ export default function MemberApprovalsPage() {
     <div className="max-w-7xl mx-auto px-6 py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">회원가입 승인 · 회원관리</h1>
-          <p className="text-sm text-gray-500 mt-1">가입요청 리스트와 상세 검토 · 승인/거부/블랙리스트 처리</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            회원가입 승인 · 회원관리
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            가입요청 리스트와 상세 검토 · 승인/거부/블랙리스트 처리
+          </p>
         </div>
         <button
           onClick={() => router.push("/admin-dashboard")}
@@ -104,8 +154,12 @@ export default function MemberApprovalsPage() {
         <div className="lg:col-span-2 rounded-xl bg-white shadow border overflow-hidden">
           <div className="px-5 py-4 border-b flex items-center justify-between">
             <div>
-              <h2 className="text-base font-semibold text-gray-900">가입요청 리스트</h2>
-              <p className="text-xs text-gray-500">상호명 / 대표자 / 사업자번호 / 지역</p>
+              <h2 className="text-base font-semibold text-gray-900">
+                가입요청 리스트
+              </h2>
+              <p className="text-xs text-gray-500">
+                상호명 / 대표자 / 사업자번호 / 지역
+              </p>
             </div>
             <div className="text-xs text-gray-500">총 {list.length}건</div>
           </div>
@@ -118,6 +172,7 @@ export default function MemberApprovalsPage() {
                   <th className="px-5 py-3">사업자번호</th>
                   <th className="px-5 py-3">지역</th>
                   <th className="px-5 py-3">요청시각</th>
+                  <th className="px-5 py-3">승인여부</th>
                 </tr>
               </thead>
               <tbody>
@@ -129,11 +184,18 @@ export default function MemberApprovalsPage() {
                     }`}
                     onClick={() => setSelected(m)}
                   >
-                    <td className="px-5 py-3 font-medium text-gray-900">{m.shopName}</td>
-                    <td className="px-5 py-3">{m.ownerName}</td>
-                    <td className="px-5 py-3">{m.businessNumber}</td>
+                    <td className="px-5 py-3 font-medium text-gray-900">
+                      {m.businessProfile?.corpName}
+                    </td>
+                    <td className="px-5 py-3">{m.businessProfile?.ceoName}</td>
+                    <td className="px-5 py-3">
+                      {m.businessProfile?.businessNumber}
+                    </td>
                     <td className="px-5 py-3">{m.region}</td>
                     <td className="px-5 py-3 text-gray-500">{m.createdAt}</td>
+                    <td className="px-5 py-3 text-gray-500">
+                      {m.businessProfile?.approvalStatus}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -150,20 +212,26 @@ export default function MemberApprovalsPage() {
             <div className="p-5 space-y-5">
               <div>
                 <div className="text-sm text-gray-500">상호명</div>
-                <div className="mt-1 font-semibold">{selected.shopName}</div>
+                <div className="mt-1 font-semibold">
+                  {selected.businessProfile?.corpName}
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <div className="text-sm text-gray-500">대표자</div>
-                  <div className="mt-1">{selected.ownerName}</div>
+                  <div className="mt-1">
+                    {selected.businessProfile?.ceoName}
+                  </div>
                 </div>
                 <div>
                   <div className="text-sm text-gray-500">연락처</div>
-                  <div className="mt-1">{selected.phone || "-"}</div>
+                  <div className="mt-1">{selected.mobile || "-"}</div>
                 </div>
                 <div>
                   <div className="text-sm text-gray-500">사업자번호</div>
-                  <div className="mt-1">{selected.businessNumber}</div>
+                  <div className="mt-1">
+                    {selected.businessProfile?.businessNumber}
+                  </div>
                 </div>
                 <div>
                   <div className="text-sm text-gray-500">지역</div>
@@ -172,7 +240,9 @@ export default function MemberApprovalsPage() {
               </div>
 
               <div>
-                <div className="text-sm text-gray-500 mb-2">사업자등록증 이미지 미리보기</div>
+                <div className="text-sm text-gray-500 mb-2">
+                  사업자등록증 이미지 미리보기
+                </div>
                 <div className="rounded-lg border bg-gray-50 overflow-hidden">
                   {selected.bizCertImageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -190,7 +260,9 @@ export default function MemberApprovalsPage() {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-gray-700">거부 사유</label>
+                <label className="text-sm font-medium text-gray-700">
+                  거부 사유
+                </label>
                 <textarea
                   value={rejectReason}
                   onChange={(e) => {
@@ -225,7 +297,9 @@ export default function MemberApprovalsPage() {
               </div>
             </div>
           ) : (
-            <div className="p-5 text-sm text-gray-500">왼쪽 목록에서 가입 요청을 선택하세요.</div>
+            <div className="p-5 text-sm text-gray-500">
+              왼쪽 목록에서 가입 요청을 선택하세요.
+            </div>
           )}
         </div>
       </div>

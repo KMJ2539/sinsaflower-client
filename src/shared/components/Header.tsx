@@ -45,7 +45,7 @@ const Header = async () => {
           */}
         </div>
         <div className="flex text-lg space-x-8 invisible md:visible">
-          {!currentUser && (
+          {currentUser && (
             <>
               {/*
               <div className="font-medium text-gray-700 hover:text-primary hover:scale-105 transition-all duration-200 cursor-pointer">
@@ -53,7 +53,7 @@ const Header = async () => {
               </div>
               */}
               <DeliveryRegionLauncher />
-              <UserDropdown></UserDropdown>
+              <UserDropdown currentUser={currentUser} />
             </>
           )}
         </div>

@@ -4,7 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function UserDropdown() {
+interface UserDropdownProps {
+  currentUser: CurrentUser;
+}
+
+export default function UserDropdown({ currentUser }: UserDropdownProps) {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -32,7 +36,7 @@ export default function UserDropdown() {
         <div className="w-6 h-6 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center text-white text-xs font-bold">
           다
         </div>
-        <span>다경플라워 님</span>
+        <span>{currentUser.name} 님</span>
         <Image
           src="/icons/dropdown-black.svg"
           alt="dropdown"

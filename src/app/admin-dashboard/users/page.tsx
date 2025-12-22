@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import { clientRequest } from "@/shared/lib/http/client";
 
 type UserStatus = "ACTIVE" | "SUSPENDED";
 type UserRole = "USER" | "ADMIN";
@@ -13,7 +14,6 @@ type AdminUser = {
   email: string;
   phone: string;
   region: string;
-  businessNumber?: string;
   role: UserRole;
   status: UserStatus;
   createdAt: string;
@@ -21,61 +21,56 @@ type AdminUser = {
   address?: string;
   bizCertImageUrl?: string;
   memo?: string;
+  mobile?: string;
+  nickname?: string;
+  name?: string;
+
+  businessProfile?: {
+    approvalStatus?: string;
+    businessNumber?: string;
+    corpName?: string;
+    ceoName?: string;
+    businessType?: string;
+    businessItem?: string;
+  };
+
+  officeAddress?: {
+    sido?: string;
+    sigungu?: string;
+    detail?: string;
+    zipcode?: string;
+  };
 };
 
 export default function AdminUsersPage() {
-  const users = useMemo<AdminUser[]>(
-    () => [
-      {
-        id: "U-101",
-        loginId: "chapel",
-        shopName: "채플꽃화",
-        ownerName: "김채플",
-        email: "chapel@example.com",
-        phone: "010-1234-5678",
-        region: "서울 강남구",
-        businessNumber: "123-45-67890",
-        role: "USER",
-        status: "ACTIVE",
-        createdAt: "2024-01-08",
-        lastLogin: "2025-12-18 09:01",
-        address: "서울 강남구 테헤란로 123",
-        bizCertImageUrl: "/images/sample-bizcert.png",
-        memo: "프리미엄 회원 예정",
-      },
-      {
-        id: "U-102",
-        loginId: "aloe",
-        shopName: "앨로플라워",
-        ownerName: "이앨로",
-        email: "aloe@example.com",
-        phone: "010-2222-3333",
-        region: "부산 해운대구",
-        businessNumber: "210-33-99887",
-        role: "USER",
-        status: "SUSPENDED",
-        createdAt: "2024-03-14",
-        lastLogin: "2025-12-17 22:11",
-        address: "부산 해운대구 센텀서로 45",
-        bizCertImageUrl: "/images/sample-bizcert.png",
-      },
-      {
-        id: "U-103",
-        loginId: "ruby",
-        shopName: "루비플라워",
-        ownerName: "박루비",
-        email: "ruby@example.com",
-        phone: "010-9876-5432",
-        region: "대전 유성구",
-        businessNumber: "119-77-66554",
-        role: "USER",
-        status: "ACTIVE",
-        createdAt: "2024-05-22",
-        address: "대전 유성구 대학로 23",
-      },
-    ],
-    []
-  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await clientRequest<{
+          code: number;
+          message: string;
+          data: {
+            content: AdminUser[];
+          };
+          timestamp: string;
+        }>({
+          method: "GET",
+          url: "/api/admin/members/all",
+        });
+        console.log("users isArray:", Array.isArray(res.data.content));
+        console.log("first user:", res.data.content?.[0]);
+        setUsers(res.data.content); // ⭐ 핵심
+      } catch (err) {
+        setError("데이터 로드 실패");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUsers();
+  }, []);
 
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<AdminUser | null>(null);
@@ -88,17 +83,18 @@ export default function AdminUsersPage() {
       ) as Record<string, { status: UserStatus; memo: string }>,
     [users]
   );
-  const [rowStates, setRowStates] = useState<Record<string, { status: UserStatus; memo: string }>>(
-    initialRowStates
-  );
+  const [rowStates, setRowStates] =
+    useState<Record<string, { status: UserStatus; memo: string }>>(
+      initialRowStates
+    );
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     const f = users.filter((u) => {
       if (!q) return true;
       return (
-        u.shopName.toLowerCase().includes(q) ||
-        u.ownerName.toLowerCase().includes(q) ||
+        u.businessProfile?.corpName?.toLowerCase().includes(q) ||
+        u.businessProfile?.ceoName?.toLowerCase().includes(q) ||
         u.loginId.toLowerCase().includes(q) ||
         u.email.toLowerCase().includes(q) ||
         u.phone.includes(q) ||
@@ -137,7 +133,9 @@ export default function AdminUsersPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">회원 리스트</h1>
-          <p className="text-sm text-gray-500 mt-1">회원 정보를 검색하고 행을 클릭하면 상세정보가 표시됩니다.</p>
+          <p className="text-sm text-gray-500 mt-1">
+            회원 정보를 검색하고 행을 클릭하면 상세정보가 표시됩니다.
+          </p>
         </div>
       </div>
 
@@ -169,7 +167,9 @@ export default function AdminUsersPage() {
                 >
                   가입일
                   {sortBy === "createdAt" && (
-                    <span className="ml-1 text-xs">{sortDir === "asc" ? "▲" : "▼"}</span>
+                    <span className="ml-1 text-xs">
+                      {sortDir === "asc" ? "▲" : "▼"}
+                    </span>
                   )}
                 </th>
                 <th
@@ -179,7 +179,9 @@ export default function AdminUsersPage() {
                 >
                   상태
                   {sortBy === "status" && (
-                    <span className="ml-1 text-xs">{sortDir === "asc" ? "▲" : "▼"}</span>
+                    <span className="ml-1 text-xs">
+                      {sortDir === "asc" ? "▲" : "▼"}
+                    </span>
                   )}
                 </th>
                 <th className="px-5 py-3">메모(사유)</th>
@@ -192,19 +194,29 @@ export default function AdminUsersPage() {
                   className="border-t hover:bg-gray-50 cursor-pointer"
                   onClick={() => setSelected(u)}
                 >
-                  <td className="px-5 py-3 font-mono text-gray-800">{u.loginId}</td>
-                  <td className="px-5 py-3 font-medium text-gray-900">{u.shopName}</td>
-                  <td className="px-5 py-3">{u.ownerName}</td>
-                  <td className="px-5 py-3">{u.phone}</td>
+                  <td className="px-5 py-3 font-mono text-gray-800">
+                    {u.loginId}
+                  </td>
+                  <td className="px-5 py-3 font-medium text-gray-900">
+                    {u.businessProfile?.corpName}
+                  </td>
+                  <td className="px-5 py-3">{u.businessProfile?.ceoName}</td>
+                  <td className="px-5 py-3">{u.mobile}</td>
                   <td className="px-5 py-3">{u.region}</td>
                   <td className="px-5 py-3 text-gray-500">{u.createdAt}</td>
-                  <td className="px-5 py-3" onClick={(e) => e.stopPropagation()}>
+                  <td
+                    className="px-5 py-3"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <select
                       value={rowStates[u.id]?.status || u.status}
                       onChange={(e) =>
                         setRowStates((prev) => ({
                           ...prev,
-                          [u.id]: { status: e.target.value as UserStatus, memo: prev[u.id]?.memo || "" },
+                          [u.id]: {
+                            status: e.target.value as UserStatus,
+                            memo: prev[u.id]?.memo || "",
+                          },
                         }))
                       }
                       className="rounded-lg border px-2 py-1 text-xs bg-white"
@@ -213,7 +225,10 @@ export default function AdminUsersPage() {
                       <option value="SUSPENDED">SUSPENDED</option>
                     </select>
                   </td>
-                  <td className="px-5 py-3" onClick={(e) => e.stopPropagation()}>
+                  <td
+                    className="px-5 py-3"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     {rowStates[u.id]?.status === "SUSPENDED" ? (
                       <input
                         type="text"
@@ -221,14 +236,19 @@ export default function AdminUsersPage() {
                         onChange={(e) =>
                           setRowStates((prev) => ({
                             ...prev,
-                            [u.id]: { status: prev[u.id].status, memo: e.target.value },
+                            [u.id]: {
+                              status: prev[u.id].status,
+                              memo: e.target.value,
+                            },
                           }))
                         }
                         placeholder="거부/정지 사유 입력"
                         className="w-full rounded-lg border p-2 text-xs"
                       />
                     ) : (
-                      <span className="text-xs text-gray-500">{rowStates[u.id]?.memo || u.memo || "-"}</span>
+                      <span className="text-xs text-gray-500">
+                        {rowStates[u.id]?.memo || u.memo || "-"}
+                      </span>
                     )}
                   </td>
                 </tr>
@@ -247,8 +267,13 @@ export default function AdminUsersPage() {
             <div className="absolute right-0 top-0 h-full w-full max-w-lg bg-white shadow-xl border-l flex flex-col">
               <div className="px-6 py-4 border-b flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">회원 상세</h3>
-                  <p className="text-xs text-gray-500">{selected.shopName} · {selected.ownerName}</p>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    회원 상세
+                  </h3>
+                  <p className="text-xs text-gray-500">
+                    {selected.businessProfile?.corpName} ·{" "}
+                    {selected.businessProfile?.ceoName}
+                  </p>
                 </div>
                 <button
                   onClick={() => setSelected(null)}
@@ -274,7 +299,8 @@ export default function AdminUsersPage() {
                       <span
                         className={
                           "inline-flex items-center px-2 py-0.5 text-xs rounded " +
-                          ((rowStates[selected.id]?.status || selected.status) === "ACTIVE"
+                          ((rowStates[selected.id]?.status ||
+                            selected.status) === "ACTIVE"
                             ? "bg-emerald-50 text-emerald-700"
                             : "bg-amber-50 text-amber-700")
                         }
@@ -285,7 +311,9 @@ export default function AdminUsersPage() {
                   </div>
                   <div>
                     <div className="text-xs text-gray-500">가입일</div>
-                    <div className="mt-1 text-gray-700">{selected.createdAt}</div>
+                    <div className="mt-1 text-gray-700">
+                      {selected.createdAt}
+                    </div>
                   </div>
                 </section>
 
@@ -296,7 +324,7 @@ export default function AdminUsersPage() {
                   </div>
                   <div>
                     <div className="text-xs text-gray-500">연락처</div>
-                    <div className="mt-1">{selected.phone}</div>
+                    <div className="mt-1">{selected.mobile}</div>
                   </div>
                   <div className="col-span-2">
                     <div className="text-xs text-gray-500">주소</div>
@@ -311,7 +339,9 @@ export default function AdminUsersPage() {
                   </div>
                   <div>
                     <div className="text-xs text-gray-500">사업자번호</div>
-                    <div className="mt-1">{selected.businessNumber || "-"}</div>
+                    <div className="mt-1">
+                      {selected.businessProfile?.businessNumber || "-"}
+                    </div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-500">최근 로그인</div>
@@ -320,7 +350,9 @@ export default function AdminUsersPage() {
                 </section>
 
                 <section>
-                  <div className="text-xs text-gray-500 mb-2">사업자등록증 이미지</div>
+                  <div className="text-xs text-gray-500 mb-2">
+                    사업자등록증 이미지
+                  </div>
                   <div className="rounded-lg border bg-gray-50 overflow-hidden">
                     {selected.bizCertImageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -330,27 +362,35 @@ export default function AdminUsersPage() {
                         className="w-full h-56 object-contain bg-white"
                       />
                     ) : (
-                      <div className="h-56 flex items-center justify-center text-gray-400 text-sm">이미지 없음</div>
+                      <div className="h-56 flex items-center justify-center text-gray-400 text-sm">
+                        이미지 없음
+                      </div>
                     )}
                   </div>
                 </section>
 
                 <section>
                   <div className="text-xs text-gray-500 mb-1">메모(사유)</div>
-                  { (rowStates[selected.id]?.status || selected.status) === "SUSPENDED" ? (
+                  {(rowStates[selected.id]?.status || selected.status) ===
+                  "SUSPENDED" ? (
                     <textarea
                       value={rowStates[selected.id]?.memo || ""}
                       onChange={(e) =>
                         setRowStates((prev) => ({
                           ...prev,
-                          [selected.id]: { status: prev[selected.id].status, memo: e.target.value },
+                          [selected.id]: {
+                            status: prev[selected.id].status,
+                            memo: e.target.value,
+                          },
                         }))
                       }
                       placeholder="정지 사유를 입력하세요"
                       className="w-full h-24 rounded-lg border p-3 text-sm focus:ring-2 focus:ring-gray-900 focus:outline-none"
                     />
                   ) : (
-                    <div className="text-sm text-gray-700 whitespace-pre-wrap">{rowStates[selected.id]?.memo || selected.memo || "-"}</div>
+                    <div className="text-sm text-gray-700 whitespace-pre-wrap">
+                      {rowStates[selected.id]?.memo || selected.memo || "-"}
+                    </div>
                   )}
                 </section>
               </div>

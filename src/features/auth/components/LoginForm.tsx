@@ -17,10 +17,12 @@ const LoginForm = () => {
   const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
+    const newFormData = {
       ...formData,
       [e.target.name]: e.target.value,
-    });
+    };
+    console.log("필드 변경:", e.target.name, e.target.value, newFormData);
+    setFormData(newFormData);
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -29,6 +31,7 @@ const LoginForm = () => {
     setError("");
 
     try {
+      console.log("폼 데이터 제출:", formData);
       // AuthContext의 login 함수 사용 (admin 계정도 포함)
       const result = await login(formData.loginId, formData.password);
       console.log(result);
@@ -213,12 +216,19 @@ const LoginForm = () => {
           onClick={() => router.push("/admin-dashboard")}
           className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gray-800 text-white text-sm font-semibold shadow hover:bg-gray-700 transition"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-            <path d="M11.7 2.005a1 1 0 0 1 .6 0l8 3A1 1 0 0 1 21 6v6a9 9 0 1 1-18 0V6a1 1 0 0 1 .7-.995l8-3Z"/>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="w-4 h-4"
+          >
+            <path d="M11.7 2.005a1 1 0 0 1 .6 0l8 3A1 1 0 0 1 21 6v6a9 9 0 1 1-18 0V6a1 1 0 0 1 .7-.995l8-3Z" />
           </svg>
           관리자 테스트: 대시보드로 이동
         </button>
-        <p className="mt-2 text-xs text-gray-500">테스트용 – 로그인 없이 관리자 대시보드 확인</p>
+        <p className="mt-2 text-xs text-gray-500">
+          테스트용 – 로그인 없이 관리자 대시보드 확인
+        </p>
       </div>
     </div>
   );
