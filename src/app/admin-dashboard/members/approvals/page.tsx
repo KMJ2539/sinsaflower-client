@@ -55,6 +55,8 @@ export default function MemberApprovalsPage() {
   const [list, setList] = useState<PendingMember[]>(initialList);
   const [selected, setSelected] = useState<PendingMember | null>(null);
   const [rejectReason, setRejectReason] = useState("");
+  const [fixNote, setFixNote] = useState("");
+  const [fixRequested, setFixRequested] = useState(false);
   const [error, setError] = useState("");
 
   const approve = () => {
@@ -77,13 +79,25 @@ export default function MemberApprovalsPage() {
     setError("");
   };
 
+  const requestFix = () => {
+    if (!selected) return;
+    if (!fixNote.trim()) {
+      setError("보완 필요 내용을 입력하세요.");
+      return;
+    }
+    console.log("REQUEST_FIX", selected.id, fixNote);
+    setFixRequested(true);
+    setTimeout(() => setFixRequested(false), 2000);
+    setError("");
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">회원가입 승인 · 회원관리</h1>
-          <p className="text-sm text-gray-500 mt-1">가입요청 리스트와 상세 검토 · 승인/거부/블랙리스트 처리</p>
-          <p className="text-sm text-gray-500 mt-1">가입요청 리스트와 상세 검토 · 승인/거부 처리</p>
+          <p className="text-sm text-gray-500 mt-1">가입요청 리스트와 상세 검토 · 승인/보완 필요/거부 처리</p>
+          
         </div>
         <button
           onClick={() => router.push("/admin-dashboard")}
@@ -184,6 +198,19 @@ export default function MemberApprovalsPage() {
               </div>
 
               <div>
+                <label className="text-sm font-medium text-gray-700">보완 필요</label>
+                <textarea
+                  value={fixNote}
+                  onChange={(e) => {
+                    setFixNote(e.target.value);
+                    setError("");
+                  }}
+                  placeholder="보완 필요 사항을 입력하세요 (서류 누락, 정보 수정 등)"
+                  className="mt-2 w-full h-20 rounded-lg border p-3 text-sm focus:ring-2 focus:ring-gray-900 focus:outline-none"
+                />
+              </div>
+
+              <div>
                 <label className="text-sm font-medium text-gray-700">거부 사유</label>
                 <textarea
                   value={rejectReason}
@@ -204,6 +231,15 @@ export default function MemberApprovalsPage() {
                 >
                   승인
                 </button>
+                <button
+                  onClick={requestFix}
+                  className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm shadow hover:bg-indigo-700"
+                >
+                  보완 요청
+                </button>
+                {fixRequested && (
+                  <span className="text-xs text-gray-500">요청됨</span>
+                )}
                 <button
                   onClick={reject}
                   className="px-4 py-2 rounded-lg bg-amber-500 text-white text-sm shadow hover:bg-amber-600"
