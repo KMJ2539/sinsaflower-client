@@ -3,6 +3,7 @@ export type OrderFormValue = {
   region: string;
   shopName: string;
   phone: string;
+  receiverShopId?: string;
   productName: string;
   productDetail?: string;
   quantity: number;

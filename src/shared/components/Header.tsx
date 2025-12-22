@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getUser } from "@/features/auth/server/auth.server";
 import { LogoutButton } from "@/features/auth/components/LogoutButton";
 import UserDropdown from "@/features/auth/components/UserDropDown";
+import DeliveryRegionLauncher from "@/shared/components/DeliveryRegionLauncher";
 
 const Header = async () => {
   const currentUser = await getUser();
@@ -24,6 +25,7 @@ const Header = async () => {
             />
           </Link>
 
+          {/*
           <nav className="space-x-8 pl-12">
             <Link
               href="orders/create"
@@ -40,16 +42,17 @@ const Header = async () => {
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-accent transition-all duration-200 group-hover:w-full"></span>
             </Link>
           </nav>
+          */}
         </div>
         <div className="flex text-lg space-x-8 invisible md:visible">
           {!currentUser && (
             <>
+              {/*
               <div className="font-medium text-gray-700 hover:text-primary hover:scale-105 transition-all duration-200 cursor-pointer">
                 당일미취급
               </div>
-              <div className="font-medium text-gray-700 hover:text-primary hover:scale-105 transition-all duration-200 cursor-pointer">
-                배송지역 설정
-              </div>
+              */}
+              <DeliveryRegionLauncher />
               <UserDropdown></UserDropdown>
             </>
           )}

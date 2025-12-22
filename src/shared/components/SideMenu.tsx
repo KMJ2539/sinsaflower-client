@@ -154,13 +154,13 @@ const SideMenu = async () => {
             </Link>
           </li>
           <li>
-            <a
-              href="#"
+            <Link
+              href="/charges"
               className="hover:text-primary transition-colors duration-200 flex items-center py-1"
             >
               <span className="w-2 h-2 bg-accent rounded-full mr-3"></span>
               충전하기
-            </a>
+            </Link>
           </li>
           <li>
             <a
@@ -172,13 +172,40 @@ const SideMenu = async () => {
             </a>
           </li>
           <li>
-            <a
-              href="#"
+            <Link
+              href="/invoice/history"
               className="hover:text-primary transition-colors duration-200 flex items-center py-1"
             >
               <span className="w-2 h-2 bg-accent rounded-full mr-3"></span>
               계산서 발행내역
-            </a>
+            </Link>
+          </li>
+        </ul>
+      </div>
+
+      {/* 커뮤니티 메뉴 */}
+      <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-gray-200">
+        <h3 className="font-semibold text-lg mb-4 border-b border-gray-200 pb-2 text-gray-800">
+          커뮤니티
+        </h3>
+        <ul className="space-y-2 text-sm">
+          <li>
+            <Link
+              href="/community/notices"
+              className="hover:text-primary transition-colors duration-200 flex items-center py-1"
+            >
+              <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+              공지사항
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/community"
+              className="hover:text-primary transition-colors duration-200 flex items-center py-1"
+            >
+              <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+              게시판
+            </Link>
           </li>
         </ul>
       </div>

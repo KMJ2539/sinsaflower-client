@@ -74,8 +74,9 @@ export default function ProductFields({
   disabled = false,
 }: Props) {
   const options = watch("options") || {};
-  const basePrice = watch("price") || 0;
+  // const basePrice = watch("price") || 0;
   const [showOptions, setShowOptions] = useState(false);
+  const [enabledOptions, setEnabledOptions] = useState<Record<string, boolean>>({});
 
   // 상품 선택 시 상세상품명 자동 입력
   const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -93,8 +94,9 @@ export default function ProductFields({
 
     let optionTotal = 0;
     Object.values(currentOptions).forEach((opt) => {
-      if (opt?.checked) {
-        optionTotal += Number(opt.price) || 0;
+      const val = Number(opt?.price);
+      if (opt?.checked && Number.isFinite(val) && val > 0) {
+        optionTotal += val;
       }
     });
 
@@ -168,7 +170,7 @@ export default function ProductFields({
 
       {/* 수량 & 원청금액 */}
       <tr>
-        <th>원청금액</th>
+        <th>cdcdc</th>
         <td colSpan={3}>
           {disabled ? (
             <span className="font-semibold text-gray-700">
@@ -310,35 +312,42 @@ export default function ProductFields({
           <td colSpan={3}>
             <div className="grid grid-cols-2 gap-1">
               {optionItems.map((item) => (
-                <label key={item} className="flex items-center gap-1">
+                <div key={item} className="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    checked={options[item]?.checked || false}
+                    {...register(`options.${item}.checked`)}
+                    defaultChecked={!!options[item]?.checked}
                     onChange={(e) => {
                       if (disabled) return;
-                      setValue(`options.${item}.checked`, e.target.checked);
-                      calculatePayment(); // 체크박스 클릭 시 계산
+                      const checked = e.target.checked;
+                      setValue(`options.${item}.checked`, checked);
+                      setEnabledOptions((prev) => ({ ...prev, [item]: checked }));
+                      if (!checked) {
+                        setValue(`options.${item}.price`, 0);
+                      }
+                      calculatePayment();
                     }}
                     disabled={disabled}
                   />
                   <input
-                    type="number"
+                    inputMode="numeric"
+                    type="text"
+                    placeholder="금액"
                     {...register(`options.${item}.price`, {
-                      valueAsNumber: true,
+                      onChange: (e) => {
+                        if (disabled) return;
+                        const raw = (e.target as HTMLInputElement).value.replace(/[^0-9]/g, "");
+                        const num = Number(raw);
+                        setValue(`options.${item}.price`, Number.isFinite(num) ? num : 0);
+                        calculatePayment();
+                      },
                     })}
-                    onChange={(e) => {
-                      if (disabled) return;
-                      setValue(
-                        `options.${item}.price`,
-                        Number(e.target.value) || 0
-                      );
-                      calculatePayment(); // 옵션 금액 입력 시 계산
-                    }}
-                    className="border border-gray-300 rounded p-0.5 text-xs w-16"
-                    disabled={disabled}
+                    defaultValue={options[item]?.price ?? ""}
+                    className="border border-gray-300 rounded p-0.5 text-xs w-20 appearance-none"
+                    disabled={disabled || !enabledOptions[item]}
                   />
-                  <span>{item}</span>
-                </label>
+                  <span className="text-xs text-gray-700">{item}</span>
+                </div>
               ))}
             </div>
           </td>

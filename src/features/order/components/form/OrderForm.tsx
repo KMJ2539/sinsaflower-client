@@ -1,12 +1,15 @@
 "use client";
 
 import { useForm } from "react-hook-form";
+import { useState, useCallback, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import BasicInfoFields from "../fields/BasicInfoFields";
 import ProductFields from "../fields/ProductFields";
 import DeliveryFields from "../fields/DeliveryFields";
 import MessageFields from "../fields/MessageFields";
 import AdditionalInfoFields from "../fields/AdditionalInfoFields";
 import { OrderFormValue } from "../../types/orderFormValue";
+import MemberSearchModal from "@/features/members/components/MemberSearchModal";
 
 interface OrderFormProps {
   mode?: "create" | "view";
@@ -34,6 +37,33 @@ const OrderForm = ({
       },
     });
 
+  const [isMemberSearchOpen, setIsMemberSearchOpen] = useState(false);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const floristId = searchParams.get("floristId");
+    const shopName = searchParams.get("shopName");
+    const phone = searchParams.get("phone");
+    const region = searchParams.get("region");
+    if (floristId || shopName || phone || region) {
+      setValue("receiverShopId", floristId ?? "");
+      setValue("shopName", shopName ?? "");
+      setValue("phone", phone ?? "");
+      setValue("region", region ?? "");
+    }
+  }, [searchParams, setValue]);
+
+  const handleSelectMember = useCallback(
+    (shop: { shopId?: string; shopName: string; region: string; phone?: string }) => {
+      setValue("receiverShopId", shop.shopId ?? "");
+      setValue("region", shop.region ?? "");
+      setValue("shopName", shop.shopName ?? "");
+      setValue("phone", shop.phone ?? "");
+      setIsMemberSearchOpen(false);
+    },
+    [setValue]
+  );
+
   const onSubmit = (data: OrderFormValue) => {
     if (isViewMode) return;
     console.log("폼 제출:", data);
@@ -54,7 +84,11 @@ const OrderForm = ({
 
       <table className="sf-table sf-table--form">
         <tbody>
-          <BasicInfoFields register={register} disabled={isViewMode} />
+          <BasicInfoFields
+            register={register}
+            disabled={isViewMode}
+            onOpenMemberSearch={() => setIsMemberSearchOpen(true)}
+          />
           <ProductFields
             register={register}
             setValue={setValue}
@@ -95,6 +129,14 @@ const OrderForm = ({
             미리보기
           </button>
         </div>
+      )}
+
+      {isMemberSearchOpen && (
+        <MemberSearchModal
+          open={isMemberSearchOpen}
+          onClose={() => setIsMemberSearchOpen(false)}
+          onSelectMember={handleSelectMember}
+        />
       )}
     </form>
   );

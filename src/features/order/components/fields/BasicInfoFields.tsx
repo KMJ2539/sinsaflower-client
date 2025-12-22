@@ -4,9 +4,10 @@ import { OrderFormValue } from "../../types/orderFormValue";
 interface Props {
   register: UseFormRegister<OrderFormValue>;
   disabled?: boolean;
+  onOpenMemberSearch?: () => void;
 }
 
-export default function BasicInfoFields({ register, disabled = false }: Props) {
+export default function BasicInfoFields({ register, disabled = false, onOpenMemberSearch }: Props) {
   return (
     <>
       {/* 당일 배송 특이사항 / 배송상태 */}
@@ -36,6 +37,8 @@ export default function BasicInfoFields({ register, disabled = false }: Props) {
         <th>수주화원{!disabled && <span className="sf-req">*</span>}</th>
         <td colSpan={3} className="py-1 px-2">
           <p className="flex gap-1">
+            {/* Hidden field to hold selected receiver shop id */}
+            <input type="hidden" {...register("receiverShopId")} />
             <input
               {...register("region")}
               disabled
@@ -59,8 +62,9 @@ export default function BasicInfoFields({ register, disabled = false }: Props) {
               type="button"
               className="sf-btn-img--md"
               disabled={disabled}
+              onClick={onOpenMemberSearch}
             >
-              화원검색
+              회원검색
             </button>
           </p>
         </td>

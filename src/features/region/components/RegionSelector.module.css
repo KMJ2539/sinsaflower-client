@@ -15,6 +15,39 @@
   color: #374151;
 }
 
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  color: #374151;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.backButton:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.backPlaceholder {
+  width: 28px;
+  height: 28px;
+}
+
 .sidoGrid,
 .sigunguGrid {
   display: grid;

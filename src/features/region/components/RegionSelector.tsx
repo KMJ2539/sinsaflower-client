@@ -8,6 +8,7 @@ interface RegionSelectorProps {
 const RegionSelector: React.FC<RegionSelectorProps> = ({ onRegionSelect }) => {
   const [selectedSido, setSelectedSido] = useState<string>("");
   const [selectedSigungu, setSelectedSigungu] = useState<string>("");
+  const [drillMode, setDrillMode] = useState<boolean>(false); // when true, show only sigungu list with back button
 
   const sidoList = [
     "서울특별시",
@@ -279,6 +280,7 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({ onRegionSelect }) => {
     e.preventDefault();
     setSelectedSido(sido);
     setSelectedSigungu("");
+    setDrillMode(true);
   };
 
   const handleSigunguClick = (
@@ -294,26 +296,46 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({ onRegionSelect }) => {
 
   return (
     <div className={styles.regionSelector}>
-      <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>1. 시/도 선택</h2>
-        <div className={styles.sidoGrid}>
-          {sidoList.map((sido) => (
-            <button
-              key={sido}
-              className={`${styles.regionButton} ${
-                selectedSido === sido ? styles.selected : ""
-              }`}
-              onClick={(e) => handleSidoClick(e, sido)}
-            >
-              {sido}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {selectedSido && sigunguMap[selectedSido] && (
+      {!drillMode && (
         <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>2. 구/군 선택</h2>
+          <div className={styles.titleRow}>
+            <h2 className={styles.sectionTitle}>1. 시/도 선택</h2>
+            <div className={styles.backPlaceholder} aria-hidden />
+          </div>
+          <div className={styles.sidoGrid}>
+            {sidoList.map((sido) => (
+              <button
+                key={sido}
+                className={`${styles.regionButton} ${
+                  selectedSido === sido ? styles.selected : ""
+                }`}
+                onClick={(e) => handleSidoClick(e, sido)}
+              >
+                {sido}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {drillMode && selectedSido && sigunguMap[selectedSido] && (
+        <div className={styles.section}>
+          <div className={styles.titleRow}>
+            <h2 className={styles.sectionTitle}>2. 구/군 선택</h2>
+            <button
+              className={styles.backButton}
+              onClick={(e) => {
+                e.preventDefault();
+                setDrillMode(false);
+                setSelectedSido("");
+                setSelectedSigungu("");
+              }}
+              aria-label="시도 선택 화면으로 돌아가기"
+              title="시/도 선택으로 돌아가기"
+            >
+              ‹
+            </button>
+          </div>
           <div className={styles.sigunguGrid}>
             {sigunguMap[selectedSido].map((sigungu) => (
               <button

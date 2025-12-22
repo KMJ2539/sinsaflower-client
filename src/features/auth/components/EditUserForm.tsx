@@ -1,9 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import DeliveryRegionPopup from "@/shared/components/DeliveryRegionPopup";
 
 const EditUserForm = () => {
   const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (!open) return;
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
 
   return (
     <div>
@@ -128,9 +142,24 @@ const EditUserForm = () => {
             <tr>
               <th>배송지역정보</th>
               <td>
-                <p>
-                  <button className="sf-btn-img--lg">배송지역 수정</button>
-                </p>
+                <div>
+                  <div className="relative inline-block" id="delivery-region-wrapper" ref={wrapperRef}>
+                    <p>
+                      <button
+                        type="button"
+                        onClick={() => setOpen(true)}
+                        className="sf-btn-img--lg"
+                      >
+                        배송지역 수정
+                      </button>
+                    </p>
+                    {open && (
+                      <DeliveryRegionPopup
+                        onClose={() => setOpen(false)}
+                      />
+                    )}
+                  </div>
+                </div>
               </td>
             </tr>
 
