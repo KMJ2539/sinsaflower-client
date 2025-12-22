@@ -236,7 +236,7 @@ export default function SettlementDetailPage() {
 
             {/* 총정산금 */}
             <tr>
-              <td className="font-medium py-3">총정산금</td>
+              <td className="font-medium py-3">총 정산금</td>
               <td className="py-3"><span className="text-red-600 font-bold">{formatCurrency(summary.finalTotal)}</span></td>
             </tr>
           </tbody>

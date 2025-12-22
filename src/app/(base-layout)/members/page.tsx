@@ -20,6 +20,7 @@ const sampleMembers = [
     region: "서울특별시 강남구",
     memo: "더채플꽃화 장례, 플로팅, 마리나파크 근조; 5단 가능 / 근조꽃화환 고급판만 가능",
     tags: ["신규회원", "과일취급", "야간배송"],
+    rank: "Gold",
     prices: { 축하: 38, 근조: 38, 동양: 70, 서양: 70, 꽃: 70, 관엽: 80 },
   },
   {
@@ -29,6 +30,7 @@ const sampleMembers = [
     region: "경기도 성남시",
     memo: "",
     tags: ["프리미엄"],
+    rank: "Silver",
     prices: { 축하: 38 },
   },
   {
@@ -38,6 +40,7 @@ const sampleMembers = [
     region: "서울특별시 서초구",
     memo: "jw웨딩홀, 더리버… 각종 행사",
     tags: ["유일가든"],
+    rank: "Bronze",
     prices: { 축하: 38, 근조: 38, 꽃: 70, 관엽: 80 },
   },
   {
@@ -45,6 +48,7 @@ const sampleMembers = [
     name: "상신플라워",
     memo: "",
     tags: [],
+    rank: "Bronze",
     prices: { 축하: 38 },
   },
   {
@@ -52,6 +56,7 @@ const sampleMembers = [
     name: "플라워드림",
     memo: "강남역 역사 내 위치, 대량 주문 가능, 당일 배송 지원",
     tags: ["4단/5단", "야간배송"],
+    rank: "Platinum",
     prices: { 축하: 40, 근조: 45, 동양: 75, 서양: 80, 꽃: 70, 관엽: 85, 쌀: 50 },
   },
   {
@@ -59,6 +64,7 @@ const sampleMembers = [
     name: "더플라워",
     memo: "프리미엄 생화 전문점, 수입 꽃 취급",
     tags: ["프리미엄", "오브제1단"],
+    rank: "Diamond",
     prices: { 축하: 50, 근조: 55, 동양: 90, 서양: 100, 꽃: 85, 관엽: 100, 기타: 60 },
   },
   {
@@ -66,6 +72,7 @@ const sampleMembers = [
     name: "순꽃아",
     memo: "서초동 위치, 신혼집 및 회사 오픈 화환 전문",
     tags: ["신규회원"],
+    rank: "Silver",
     prices: { 축하: 35, 근조: 35, 동양: 65, 서양: 70 },
   },
   {
@@ -73,9 +80,13 @@ const sampleMembers = [
     name: "플라워로드",
     memo: "과일꾸러미 고급 마감 전문, 명절 판매량 높음",
     tags: ["과일취급"],
+    rank: "Gold",
     prices: { 축하: 38, 근조: 38, 과일: 100 },
   },
 ];
+
+type Rank = "Bronze" | "Silver" | "Gold" | "Platinum" | "Diamond";
+type SearchMember = { id?: string; name?: string; phone?: string; region?: string; memo?: string; tags?: string[]; prices?: Record<string, number | string>; rank?: Rank };
 
 export default function MembersPage() {
   const router = useRouter();
@@ -86,7 +97,7 @@ export default function MembersPage() {
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"map" | "list">("list");
   const [memberType, setMemberType] = useState<"partners" | "premium">("partners");
-  const [members, setMembers] = useState<Array<{id?: string; name?: string; phone?: string; region?: string; memo?: string; tags?: string[]; prices?: Record<string, number | string> }>>([]);
+  const [members, setMembers] = useState<SearchMember[]>([]);
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   
   // 시/도 → 시/군/구 SVG 매핑 (사용자 요구 형식)
@@ -149,6 +160,14 @@ export default function MembersPage() {
     setMembers([]);
   }, []);
 
+  // 프리미엄/파트너스 토글 시 현재 선택 지역으로 즉시 재검색하여 필터 적용
+  useEffect(() => {
+    if (selectedProvince) {
+      onSearch(selectedProvince, selectedDistrict);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [memberType]);
+
   const onSearch = async (prov: string, district: string | null) => {
     // 실제 API 연결 (실패 시 샘플데이터 fallback)
     try {
@@ -156,23 +175,59 @@ export default function MembersPage() {
       const res = await fetch(`/api/members?${qs.toString()}`);
       if (res.ok) {
         const data = await res.json();
-        let filtered = Array.isArray(data) ? data : [];
+        let filtered: SearchMember[] = Array.isArray(data) ? data : [];
+        if (memberType === "premium") {
+          filtered = filtered.filter((m) => isPremiumRank(m.rank) || (m.tags || []).includes("프리미엄"));
+        }
         if (searchKeyword.trim()) {
           filtered = filtered.filter((m) => m.name?.includes(searchKeyword.trim()));
         }
+        filtered = [...filtered].sort((a, b) => {
+          const wb = rankWeight(b.rank);
+          const wa = rankWeight(a.rank);
+          if (wb !== wa) return wb - wa;
+          return (a.name || "").localeCompare(b.name || "", "ko");
+        });
         setMembers(filtered);
       } else {
-        let filtered = sampleMembers.filter((m) => (memberType === "premium" ? (m.tags || []).includes("프리미엄") : true));
+        // Fallback: build local dataset. If 강남구 selected, generate 20 samples with ranks.
+        let source: SearchMember[] = [];
+        const isGangnam = prov === "서울특별시" && district === "강남구";
+        if (isGangnam) {
+          source = generateGangnamSamples();
+        } else {
+          source = sampleMembers;
+        }
+        let filtered = source.filter((m) => (memberType === "premium" ? isPremiumRank(m.rank) : true));
         if (searchKeyword.trim()) {
           filtered = filtered.filter((m) => m.name?.includes(searchKeyword.trim()));
         }
+        filtered = [...filtered].sort((a, b) => {
+          const wb = rankWeight(b.rank);
+          const wa = rankWeight(a.rank);
+          if (wb !== wa) return wb - wa;
+          return (a.name || "").localeCompare(b.name || "", "ko");
+        });
         setMembers(filtered);
       }
     } catch {
-      let filtered = sampleMembers.filter((m) => (memberType === "premium" ? (m.tags || []).includes("프리미엄") : true));
+      let source: SearchMember[] = [];
+      const isGangnam = prov === "서울특별시" && district === "강남구";
+      if (isGangnam) {
+        source = generateGangnamSamples();
+      } else {
+        source = sampleMembers;
+      }
+      let filtered = source.filter((m) => (memberType === "premium" ? isPremiumRank(m.rank) : true));
       if (searchKeyword.trim()) {
         filtered = filtered.filter((m) => m.name?.includes(searchKeyword.trim()));
       }
+      filtered = [...filtered].sort((a, b) => {
+        const wb = rankWeight(b.rank);
+        const wa = rankWeight(a.rank);
+        if (wb !== wa) return wb - wa;
+        return (a.name || "").localeCompare(b.name || "", "ko");
+      });
       setMembers(filtered);
     }
     setSelectedProvince(prov);
@@ -180,6 +235,55 @@ export default function MembersPage() {
   };
 
   const titleRegion = selectedProvince + (selectedDistrict ? ` ${selectedDistrict}` : "");
+
+  const RANKS = ["Bronze", "Silver", "Gold", "Platinum", "Diamond"] as const;
+  const isPremiumRank = (rank?: Rank) => (rank ? ["Gold", "Platinum", "Diamond"].includes(rank) : false);
+  const rankWeight = (rank?: Rank) => {
+    switch (rank) {
+      case "Diamond": return 5;
+      case "Platinum": return 4;
+      case "Gold": return 3;
+      case "Silver": return 2;
+      case "Bronze": return 1;
+      default: return 0;
+    }
+  };
+
+  function generateGangnamSamples(): SearchMember[] {
+    const samples: SearchMember[] = [];
+    const basePrices = [
+      { 축하: 35, 근조: 35, 동양: 65, 서양: 70, 꽃: 65, 관엽: 75 },
+      { 축하: 38, 근조: 38, 동양: 70, 서양: 70, 꽃: 70, 관엽: 80 },
+      { 축하: 40, 근조: 45, 동양: 75, 서양: 80, 꽃: 70, 관엽: 85, 쌀: 50 },
+      { 축하: 50, 근조: 55, 동양: 90, 서양: 100, 꽃: 85, 관엽: 100, 기타: 60 },
+    ];
+    const namesByRank: Record<Rank, string[]> = {
+      Bronze: ["강남꽃방", "라일락플라워", "루비플라워", "상신플라워"],
+      Silver: ["앨로플라워", "순꽃아", "로즈앤리프", "수국플라워"],
+      Gold: ["채플꽃화", "플라워로드", "가든하우스", "벨플라워"],
+      Platinum: ["플라워드림", "더가든", "플라워테라스", "플라워라운지"],
+      Diamond: ["더플라워", "노블플라워", "다이아가든", "프레스티지플라워"],
+    };
+
+    let idCounter = 1000;
+    (RANKS as ReadonlyArray<Rank>).forEach((rank, rIdx) => {
+      const names = namesByRank[rank];
+      names.forEach((nm, i) => {
+        const prices = basePrices[Math.min(rIdx, basePrices.length - 1)];
+        samples.push({
+          id: `gn-${idCounter++}`,
+          name: nm,
+          phone: `010-${String(1000 + rIdx * 100 + i * 7).padStart(4, "0")}-${String(2000 + rIdx * 100 + i * 9).padStart(4, "0")}`,
+          region: "서울특별시 강남구",
+          memo: i % 2 === 0 ? "등록된 메모가 없습니다." : "행사/장례 다수 진행 경험",
+          tags: isPremiumRank(rank) ? ["프리미엄"] : [],
+          prices,
+          rank,
+        });
+      });
+    });
+    return samples;
+  }
 
   return (
     <div className="max-w-7xl mx-auto py-8">

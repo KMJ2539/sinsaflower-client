@@ -1,14 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { useAuth } from "@/shared/context/auth.context";
 
+const PRODUCT_KEYS = ["화환", "근조", "꽃다발", "동양란", "서양란", "관엽식물"] as const;
+type ProductKey = typeof PRODUCT_KEYS[number];
+
 const Dashboard = () => {
-  const { user, dashboardInfo, refreshDashboardInfo, isAuthenticated } =
+  const { dashboardInfo, refreshDashboardInfo, isAuthenticated } =
     useAuth();
 
-  const navigate = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  // router not used in this view currently
+  const [loading] = useState(false);
+  const [error] = useState("");
+  const [disabledProducts, setDisabledProducts] = useState<Record<ProductKey, boolean>>({
+    화환: false,
+    근조: false,
+    꽃다발: false,
+    동양란: false,
+    서양란: false,
+    관엽식물: false,
+  });
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -16,13 +28,38 @@ const Dashboard = () => {
     }
   }, [isAuthenticated, refreshDashboardInfo]);
 
+  // Load previously saved 미취급상품 설정 from localStorage
+  useEffect(() => {
+    try {
+      const raw = typeof window !== "undefined" ? localStorage.getItem("sf_unhandled_products") : null;
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        const next: Record<ProductKey, boolean> = { 화환: false, 근조: false, 꽃다발: false, 동양란: false, 서양란: false, 관엽식물: false };
+        PRODUCT_KEYS.forEach((k) => {
+          if (typeof parsed?.[k] === "boolean") next[k] = parsed[k];
+        });
+        setDisabledProducts(next);
+      }
+    } catch {}
+  }, []);
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("ko-KR").format(amount);
   };
 
-  const handleOrderClick = (e) => {
-    e.preventDefault();
-    navigate("/order-form");
+  // order click is handled elsewhere; removed unused handler
+
+  const handleSaveUnhandledProducts = () => {
+    setSaveStatus("saving");
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.setItem("sf_unhandled_products", JSON.stringify(disabledProducts));
+      }
+      setSaveStatus("saved");
+      setTimeout(() => setSaveStatus("idle"), 2000);
+    } catch {
+      setSaveStatus("error");
+    }
   };
 
   if (loading) {
@@ -292,48 +329,31 @@ const Dashboard = () => {
               <h4 className="font-semibold text-gray-800">미취급상품 설정</h4>
             </div>
             <div className="grid grid-cols-2 gap-2 text-sm">
-              <label className="flex items-center p-2 bg-white/60 rounded-lg hover:bg-white/80 transition-colors duration-200 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="mr-2 h-4 w-4 text-purple-600 rounded focus:ring-purple-500"
-                />
-                화환
-              </label>
-              <label className="flex items-center p-2 bg-white/60 rounded-lg hover:bg-white/80 transition-colors duration-200 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="mr-2 h-4 w-4 text-purple-600 rounded focus:ring-purple-500"
-                />
-                근조
-              </label>
-              <label className="flex items-center p-2 bg-white/60 rounded-lg hover:bg-white/80 transition-colors duration-200 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="mr-2 h-4 w-4 text-purple-600 rounded focus:ring-purple-500"
-                />
-                꽃다발
-              </label>
-              <label className="flex items-center p-2 bg-white/60 rounded-lg hover:bg-white/80 transition-colors duration-200 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="mr-2 h-4 w-4 text-purple-600 rounded focus:ring-purple-500"
-                />
-                동양란
-              </label>
-              <label className="flex items-center p-2 bg-white/60 rounded-lg hover:bg-white/80 transition-colors duration-200 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="mr-2 h-4 w-4 text-purple-600 rounded focus:ring-purple-500"
-                />
-                서양란
-              </label>
-              <label className="flex items-center p-2 bg-white/60 rounded-lg hover:bg-white/80 transition-colors duration-200 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="mr-2 h-4 w-4 text-purple-600 rounded focus:ring-purple-500"
-                />
-                관엽식물
-              </label>
+              {PRODUCT_KEYS.map((label) => (
+                <label key={label} className="flex items-center p-2 bg-white/60 rounded-lg hover:bg-white/80 transition-colors duration-200 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={!!disabledProducts[label]}
+                    onChange={(e) => setDisabledProducts((prev) => ({ ...prev, [label]: e.target.checked }))}
+                    className="mr-2 h-4 w-4 text-purple-600 rounded focus:ring-purple-500"
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
+            <div className="mt-3 flex items-center gap-2">
+              <button
+                onClick={handleSaveUnhandledProducts}
+                className="px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-medium hover:bg-purple-700 transition shadow"
+              >
+                {saveStatus === "saving" ? "저장 중..." : "저장"}
+              </button>
+              {saveStatus === "saved" && (
+                <span className="text-xs text-gray-600">저장됨</span>
+              )}
+              {saveStatus === "error" && (
+                <span className="text-xs text-red-600">저장 실패</span>
+              )}
             </div>
           </div>
         </div>

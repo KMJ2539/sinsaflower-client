@@ -22,6 +22,8 @@ export type Member = {
   memo?: string;
   tags?: string[];
   prices?: Record<string, number | string>;
+  phone?: string;
+  rank?: "Bronze" | "Silver" | "Gold" | "Platinum" | "Diamond";
 };
 
 interface Props {
@@ -33,6 +35,14 @@ export default function MemberItem({ member, onSelect }: Props) {
   const getTagStyle = (tag: string) => TAG_COLOR_MAP[tag] || { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200" };
   const [showTooltip, setShowTooltip] = React.useState(false);
   const hoverTimer = React.useRef<number | null>(null);
+
+  const RANK_STYLE: Record<string, { bg: string; text: string; border: string }> = {
+    Bronze: { bg: "bg-amber-100", text: "text-amber-800", border: "border-amber-200" },
+    Silver: { bg: "bg-gray-100", text: "text-gray-700", border: "border-gray-300" },
+    Gold: { bg: "bg-yellow-100", text: "text-yellow-800", border: "border-yellow-200" },
+    Platinum: { bg: "bg-indigo-100", text: "text-indigo-700", border: "border-indigo-200" },
+    Diamond: { bg: "bg-teal-100", text: "text-teal-800", border: "border-teal-200" },
+  };
 
   const handleMouseEnter = () => {
     if (hoverTimer.current) window.clearTimeout(hoverTimer.current);
@@ -65,6 +75,15 @@ export default function MemberItem({ member, onSelect }: Props) {
             aria-describedby={showTooltip ? `member-tooltip-${member.id || member.name}` : undefined}
           >
             {member.name}
+            {member.rank && (
+              <span
+                className={`ml-2 inline-block px-2 py-0.5 text-[11px] font-semibold rounded border ${
+                  RANK_STYLE[member.rank].bg
+                } ${RANK_STYLE[member.rank].text} ${RANK_STYLE[member.rank].border}`}
+              >
+                {member.rank}
+              </span>
+            )}
             {showTooltip && (
               <div
                 id={`member-tooltip-${member.id || member.name}`}
