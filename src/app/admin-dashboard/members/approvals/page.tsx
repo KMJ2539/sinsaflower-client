@@ -64,13 +64,6 @@ export default function MemberApprovalsPage() {
     setSelected(null);
   };
 
-  const blacklist = () => {
-    if (!selected) return;
-    console.log("BLACKLIST", selected.id);
-    setList((prev) => prev.filter((m) => m.id !== selected.id));
-    setSelected(null);
-  };
-
   const reject = () => {
     if (!selected) return;
     if (!rejectReason.trim()) {
@@ -90,6 +83,7 @@ export default function MemberApprovalsPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">회원가입 승인 · 회원관리</h1>
           <p className="text-sm text-gray-500 mt-1">가입요청 리스트와 상세 검토 · 승인/거부/블랙리스트 처리</p>
+          <p className="text-sm text-gray-500 mt-1">가입요청 리스트와 상세 검토 · 승인/거부 처리</p>
         </div>
         <button
           onClick={() => router.push("/admin-dashboard")}
@@ -215,12 +209,6 @@ export default function MemberApprovalsPage() {
                   className="px-4 py-2 rounded-lg bg-amber-500 text-white text-sm shadow hover:bg-amber-600"
                 >
                   거부
-                </button>
-                <button
-                  onClick={blacklist}
-                  className="px-4 py-2 rounded-lg bg-red-600 text-white text-sm shadow hover:bg-red-700"
-                >
-                  블랙리스트
                 </button>
               </div>
             </div>
