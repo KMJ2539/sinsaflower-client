@@ -27,6 +27,9 @@ const OrderForm = ({
   const { register, handleSubmit, setValue, watch, control, getValues } =
     useForm<OrderFormValue>({
       defaultValues: {
+        orderType: "",
+        autoSido: "",
+        autoSigungu: "",
         originPrice: 0,
         price: 0,
         payment: 0,
@@ -45,11 +48,19 @@ const OrderForm = ({
     const shopName = searchParams.get("shopName");
     const phone = searchParams.get("phone");
     const region = searchParams.get("region");
+    const orderTypeParam = searchParams.get("orderType");
     if (floristId || shopName || phone || region) {
       setValue("receiverShopId", floristId ?? "");
       setValue("shopName", shopName ?? "");
       setValue("phone", phone ?? "");
       setValue("region", region ?? "");
+      // If coming from member selection, default to '회원 선택 발주'
+      if (orderTypeParam === "member" || floristId || shopName) {
+        setValue("orderType", "member");
+        // Clear auto-assignment fields when selecting member flow
+        setValue("autoSido", "");
+        setValue("autoSigungu", "");
+      }
     }
   }, [searchParams, setValue]);
 
@@ -86,6 +97,8 @@ const OrderForm = ({
         <tbody>
           <BasicInfoFields
             register={register}
+            watch={watch}
+            setValue={setValue}
             disabled={isViewMode}
             onOpenMemberSearch={() => setIsMemberSearchOpen(true)}
           />

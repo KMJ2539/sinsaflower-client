@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getUser } from "@/features/auth/server/auth.server";
-import { LogoutButton } from "@/features/auth/components/LogoutButton";
 import UserDropdown from "@/features/auth/components/UserDropDown";
 import DeliveryRegionLauncher from "@/shared/components/DeliveryRegionLauncher";
+import HeaderWaitIndicator from "@/shared/components/HeaderWaitIndicator";
 
 const Header = async () => {
   const currentUser = await getUser();
@@ -24,6 +24,7 @@ const Header = async () => {
               className="rounded-lg"
             />
           </Link>
+          <HeaderWaitIndicator />
 
           {/*
           <nav className="space-x-8 pl-12">
@@ -44,7 +45,7 @@ const Header = async () => {
           </nav>
           */}
         </div>
-        <div className="flex text-lg space-x-8 invisible md:visible">
+        <div className="flex text-lg space-x-8 invisible md:visible items-center">
           {currentUser && (
             <>
               {/*

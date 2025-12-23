@@ -86,6 +86,25 @@ export default function ProductFields({
     setValue("productDetail", selected?.name || "");
   };
 
+  // 빠른 선택: 자주 쓰는 8개 상품 버튼
+  const quickProducts: { code: string; name: string }[] = [
+    { code: "35", name: "축하3단" },
+    { code: "39", name: "근조3단" },
+    { code: "41", name: "근조 바구니" },
+    { code: "04", name: "동양란" },
+    { code: "12", name: "서양란" },
+    { code: "02", name: "꽃바구니" },
+    { code: "05", name: "관엽식물" },
+    { code: "09", name: "근조오브제" },
+  ];
+
+  const quickSelectProduct = (code: string) => {
+    if (disabled) return;
+    const selected = products.find((p) => p.code === code);
+    setValue("productName", selected?.code || "");
+    setValue("productDetail", selected?.name || "");
+  };
+
   // 결제금액 합산(옵션 포함)
   const calculatePayment = (newPrice?: number) => {
     if (disabled) return;
@@ -146,14 +165,35 @@ export default function ProductFields({
                 ))}
               </select>
             )}
-            <div className="flex items-center gap-1">
-              <p>상세상품명</p>
-              <input
-                {...register("productDetail")}
-                className="border border-gray-300 rounded p-0.5 text-xs w-30"
-                disabled={disabled}
-              />
-            </div>
+
+            {!disabled && (
+              <div className="flex flex-wrap items-center gap-1">
+                {quickProducts.map((qp) => (
+                  <button
+                    key={qp.code}
+                    type="button"
+                    className="px-2 py-1 text-[11px] border rounded hover:bg-primary/10 whitespace-nowrap"
+                    onClick={() => quickSelectProduct(qp.code)}
+                  >
+                    {qp.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </td>
+      </tr>
+
+      {/* 상세상품명 + 수량 */}
+      <tr>
+        <th>상세상품명</th>
+        <td colSpan={3}>
+          <div className="flex items-center gap-3 justify-between w-full">
+            <input
+              {...register("productDetail")}
+              className="border border-gray-300 rounded p-0.5 text-xs flex-1 min-w-[220px]"
+              disabled={disabled}
+            />
             <div className="flex items-center gap-1">
               <p>수량{!disabled && <span className="sf-req">*</span>}</p>
               <input
@@ -170,7 +210,7 @@ export default function ProductFields({
 
       {/* 수량 & 원청금액 */}
       <tr>
-        <th>cdcdc</th>
+        <th>원천금액</th>
         <td colSpan={3}>
           {disabled ? (
             <span className="font-semibold text-gray-700">

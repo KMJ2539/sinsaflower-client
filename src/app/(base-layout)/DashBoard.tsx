@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 // import { useRouter } from "next/navigation";
 import { useAuth } from "@/shared/context/auth.context";
@@ -21,6 +22,8 @@ const Dashboard = () => {
     관엽식물: false,
   });
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+
+  const [waitTimer, setWaitTimer] = useState<null | number>(null);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -62,6 +65,47 @@ const Dashboard = () => {
     }
   };
 
+  // 주문 실시간 대기 시작
+  const startWaitingForOrder = () => {
+    // 열기 + 더미 도착 타이머 시작 (상단 헤더 인디케이터에 표시)
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("sf_wait_start"));
+    }
+    // 5초 후 더미 주문 도착
+    const tid = window.setTimeout(() => {
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("sf_order_arrived", {
+            detail: {
+              orderNumber: `SF-${Date.now().toString().slice(-6)}`,
+              region: "서울특별시 강남구",
+              deliveryDate: new Date().toLocaleDateString(),
+              productType: "근조",
+              basePrice: 70000,
+              notes: "근조3단, 리본 문구 요청: 故인 의 명복을 빕니다",
+            },
+          })
+        );
+      }
+    }, 5000);
+    setWaitTimer(tid);
+  };
+
+  // 대기 취소
+  // 헤더에서 대기 취소 이벤트를 받으면 타이머 정리
+  useEffect(() => {
+    const onCancel = () => {
+      if (waitTimer) {
+        window.clearTimeout(waitTimer);
+        setWaitTimer(null);
+      }
+    };
+    window.addEventListener("sf_wait_cancel", onCancel as EventListener);
+    return () => {
+      window.removeEventListener("sf_wait_cancel", onCancel as EventListener);
+    };
+  }, [waitTimer]);
+
   if (loading) {
     return (
       <div className="min-h-64 flex items-center justify-center">
@@ -81,7 +125,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Banner */}
+      {/* Banner (static content; inline waiting moved to header) */}
       <div className="sf-card bg-gray-100">
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -107,7 +151,38 @@ const Dashboard = () => {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        {/* 주문 실시간 대기 */}
+        <div className="sf-card hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
+              <svg
+                className="w-6 h-6 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-gray-800">대기</div>
+              <div className="text-sm text-gray-500">상태</div>
+            </div>
+          </div>
+          <h3 className="font-semibold text-gray-800 mb-2">주문 실시간 대기</h3>
+          <button
+            onClick={startWaitingForOrder}
+            className="inline-flex items-center bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-md hover:shadow-lg"
+          >
+            주문 실시간 대기
+          </button>
+        </div>
         {/* 미확인 수주 */}
         <div className="sf-card hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
           <div className="flex items-center justify-between mb-4">
@@ -249,6 +324,8 @@ const Dashboard = () => {
           </a>
         </div>
       </div>
+
+      
 
       {/* Settings */}
       <div className="sf-card">
