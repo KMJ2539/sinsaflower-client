@@ -144,7 +144,6 @@ export default function DeliveryRegionPopup({ onClose, modalOpenRef }: Props) {
   const [now, setNow] = useState<string>(new Date().toLocaleString());
   const [isOpenRegionModal, setIsOpenRegionModal] = useState<boolean>(false);
   const [activeRowId, setActiveRowId] = useState<string | null>(null);
-  const [pendingSido, setPendingSido] = useState<string | null>(null);
 
   const closeRegionModal = () => {
     setIsOpenRegionModal(false);
@@ -395,19 +394,12 @@ export default function DeliveryRegionPopup({ onClose, modalOpenRef }: Props) {
         size="lg"
       >
         <RegionSelector
-          onRegionSelect={(sido: string, sigungu?: string) => {
+          onRegionSelect={(sido: string, sigungu: string) => {
             if (!activeRowId) return;
-            if (!sigungu) {
-              // First step: only 시/도 picked, keep modal open
-              setPendingSido(sido);
-              return;
-            }
-            const finalSido = pendingSido || sido;
-            const regionLabel = `${finalSido} ${sigungu}`;
-            updateRegion(activeRowId, regionLabel, finalSido, sigungu);
+            const regionLabel = `${sido} ${sigungu}`;
+            updateRegion(activeRowId, regionLabel, sido, sigungu);
             setIsOpenRegionModal(false);
             setActiveRowId(null);
-            setPendingSido(null);
           }}
         />
       </Modal>
