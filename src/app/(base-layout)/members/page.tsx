@@ -431,6 +431,7 @@ export default function MembersPage() {
                 shopName: String(m.name || ""),
                 phone: String(m.phone || ""),
                 region: String(m.region || ""),
+                orderType: "member",
               });
               router.push(`/orders/create?${qs.toString()}`);
             }}

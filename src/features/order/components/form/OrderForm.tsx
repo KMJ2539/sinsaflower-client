@@ -48,11 +48,19 @@ const OrderForm = ({
     const shopName = searchParams.get("shopName");
     const phone = searchParams.get("phone");
     const region = searchParams.get("region");
+    const orderTypeParam = searchParams.get("orderType");
     if (floristId || shopName || phone || region) {
       setValue("receiverShopId", floristId ?? "");
       setValue("shopName", shopName ?? "");
       setValue("phone", phone ?? "");
       setValue("region", region ?? "");
+      // If coming from member selection, default to '회원 선택 발주'
+      if (orderTypeParam === "member" || floristId || shopName) {
+        setValue("orderType", "member");
+        // Clear auto-assignment fields when selecting member flow
+        setValue("autoSido", "");
+        setValue("autoSigungu", "");
+      }
     }
   }, [searchParams, setValue]);
 
@@ -69,6 +77,23 @@ const OrderForm = ({
 
   const onSubmit = (data: OrderFormValue) => {
     if (isViewMode) return;
+    // Submit-time validation according to order type
+    if (!data.orderType) {
+      alert("주문 유형을 선택하세요");
+      return;
+    }
+    if (data.orderType === "auto") {
+      if (!data.autoSido || !data.autoSigungu) {
+        alert("자동배정 지역(시/도, 구/군)을 선택하세요");
+        return;
+      }
+    }
+    if (data.orderType === "member") {
+      if (!data.receiverShopId) {
+        alert("수주화원을 선택해주세요");
+        return;
+      }
+    }
     console.log("폼 제출:", data);
   };
 
