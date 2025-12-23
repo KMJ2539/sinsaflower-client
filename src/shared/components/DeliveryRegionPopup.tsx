@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Modal from "@/shared/components/ui/Modal";
 import RegionSelector from "@/features/region/components/RegionSelector";
+import { clientRequest } from "@/shared/lib/http/client";
 
 type PriceMap = {
   [key: string]: string;
@@ -16,6 +17,19 @@ type RegionRow = {
   handled: boolean;
   prices: PriceMap;
   selected?: boolean;
+};
+
+type MemberProductPriceRequest = {
+  categoryName: string;
+  price: number;
+  isAvailable: boolean;
+};
+
+type MemberRegionPriceRequest = {
+  sido: string;
+  sigungu: string;
+  handled: boolean;
+  prices: MemberProductPriceRequest[];
 };
 
 interface Props {
@@ -57,6 +71,36 @@ function makeEmptyRow(): RegionRow {
     prices,
     selected: false,
   };
+}
+
+function buildApiPayload(rows: RegionRow[]): MemberRegionPriceRequest[] {
+  return rows
+    .filter((r) => r.sido && r.sigungu)
+    .map((r) => ({
+      sido: r.sido!,
+      sigungu: r.sigungu!,
+      handled: r.handled,
+      prices: Object.entries(r.prices).map(([category, value]) => {
+        const price = value === "" ? 0 : Number(value);
+        return {
+          categoryName: category,
+          price,
+          isAvailable: r.handled && price > 0,
+        };
+      }),
+    }));
+}
+
+async function saveRegionsAndPrices(payload: MemberRegionPriceRequest[]) {
+  const res = await clientRequest({
+    url: "/api/members/me/regions-prices",
+    method: "POST",
+    data: payload,
+  });
+
+  if (!res.ok) {
+    throw new Error("저장 실패");
+  }
 }
 
 export default function DeliveryRegionPopup({ onClose, modalOpenRef }: Props) {
@@ -122,31 +166,27 @@ export default function DeliveryRegionPopup({ onClose, modalOpenRef }: Props) {
 
   const header = useMemo(() => ["", "지역", ...columns], []);
 
-  const handleSave = () => {
-    const target = rows.some((r) => r.selected)
-      ? rows.filter((r) => r.selected)
-      : rows;
-    const payload = target.map((r) => {
-      const prices: { [key: string]: number } = {};
-      Object.entries(r.prices).forEach(([k, v]) => {
-        const num = v === "" ? 0 : Number(v);
-        prices[k] = Number.isFinite(num) ? num : 0;
-      });
-      return {
-        id: r.id,
-        region: r.region.trim(),
-        sido: r.sido,
-        sigungu: r.sigungu,
-        handled: r.handled,
-        prices,
-        selected: r.selected,
-      };
-    });
-    if (typeof onSave === "function") {
-      onSave(payload);
-    } else {
-      // Fallback for now: log to console
-      console.log("DeliveryRegionPopup save payload", payload);
+  const [saving, setSaving] = useState(false);
+  const handleSave = async () => {
+    if (saving) return;
+
+    // 1️⃣ 필수 지역 검증
+    if (rows.some((r) => !r.sido || !r.sigungu)) {
+      alert("지역을 선택하지 않은 행이 있습니다.");
+      return;
+    }
+
+    const payload = buildApiPayload(rows);
+
+    try {
+      setSaving(true);
+      await saveRegionsAndPrices(payload);
+      alert("저장되었습니다.");
+      onClose(); // 팝업 닫기
+    } catch (e) {
+      alert("저장 중 오류가 발생했습니다.");
+    } finally {
+      setSaving(false);
     }
   };
 
