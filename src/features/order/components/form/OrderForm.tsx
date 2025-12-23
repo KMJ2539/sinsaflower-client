@@ -77,23 +77,6 @@ const OrderForm = ({
 
   const onSubmit = (data: OrderFormValue) => {
     if (isViewMode) return;
-    // Submit-time validation according to order type
-    if (!data.orderType) {
-      alert("주문 유형을 선택하세요");
-      return;
-    }
-    if (data.orderType === "auto") {
-      if (!data.autoSido || !data.autoSigungu) {
-        alert("자동배정 지역(시/도, 구/군)을 선택하세요");
-        return;
-      }
-    }
-    if (data.orderType === "member") {
-      if (!data.receiverShopId) {
-        alert("수주화원을 선택해주세요");
-        return;
-      }
-    }
     console.log("폼 제출:", data);
   };
 
