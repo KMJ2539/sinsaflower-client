@@ -171,7 +171,8 @@ const ProductPriceTable = () => {
       <Modal
         isOpen={isOpenRegionModal}
         title="지역 추가"
-        hasFooter={false}
+        hasFooter={true}
+        cancelText="닫기"
         onCancel={() => setIsOpenRegionModal(false)}
         size="lg"
       >

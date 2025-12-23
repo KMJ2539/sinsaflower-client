@@ -79,18 +79,22 @@ export default function Modal({
         <div className="mb-6">{children}</div>
         {hasFooter && (
           <div className="flex gap-2">
-            <button
-              onClick={onCancel}
-              className="flex-1 px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300"
-            >
-              {cancelText}
-            </button>
-            <button
-              onClick={handleConfirm}
-              className="flex-1 px-4 py-2 rounded-md text-white bg-primary"
-            >
-              {confirmText}
-            </button>
+            {cancelText && (
+              <button
+                onClick={onCancel}
+                className="flex-1 px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300"
+              >
+                {cancelText}
+              </button>
+            )}
+            {confirmText && (
+              <button
+                onClick={handleConfirm}
+                className="flex-1 px-4 py-2 rounded-md text-white bg-primary"
+              >
+                {confirmText}
+              </button>
+            )}
           </div>
         )}
       </div>
