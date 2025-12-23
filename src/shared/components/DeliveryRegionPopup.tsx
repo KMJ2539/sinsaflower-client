@@ -20,15 +20,18 @@ type RegionRow = {
 
 interface Props {
   onClose: () => void;
-  onSave?: (rows: {
-    id: string;
-    region: string;
-    sido?: string;
-    sigungu?: string;
-    handled: boolean;
-    prices: { [key: string]: number };
-    selected?: boolean;
-  }[]) => void;
+  onSave?: (
+    rows: {
+      id: string;
+      region: string;
+      sido?: string;
+      sigungu?: string;
+      handled: boolean;
+      prices: { [key: string]: number };
+      selected?: boolean;
+    }[]
+  ) => void;
+  modalOpenRef: React.MutableRefObject<boolean>;
 }
 
 const columns = [
@@ -56,12 +59,24 @@ function makeEmptyRow(): RegionRow {
   };
 }
 
-export default function DeliveryRegionPopup({ onClose }: Props) {
+export default function DeliveryRegionPopup({ onClose, modalOpenRef }: Props) {
   const [rows, setRows] = useState<RegionRow[]>(() => [makeEmptyRow()]);
   const [now, setNow] = useState<string>(new Date().toLocaleString());
   const [isOpenRegionModal, setIsOpenRegionModal] = useState<boolean>(false);
   const [activeRowId, setActiveRowId] = useState<string | null>(null);
   const [pendingSido, setPendingSido] = useState<string | null>(null);
+
+  const closeRegionModal = () => {
+    setIsOpenRegionModal(false);
+  };
+
+  useEffect(() => {
+    modalOpenRef.current = true;
+
+    return () => {
+      modalOpenRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date().toLocaleString()), 1000);
@@ -69,27 +84,48 @@ export default function DeliveryRegionPopup({ onClose }: Props) {
   }, []);
 
   const toggleSelect = (id: string) => {
-    setRows((prev) => prev.map((r) => (r.id === id ? { ...r, selected: !r.selected } : r)));
+    setRows((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, selected: !r.selected } : r))
+    );
   };
 
-  const addRow = () => {cd
+  const addRow = () => {
+    cd;
     const newRow = makeEmptyRow();
     setRows((prev) => [...prev, newRow]);
     setActiveRowId(newRow.id);
     setIsOpenRegionModal(true);
   };
-  const deleteSelected = () => setRows((prev) => prev.filter((r) => !r.selected));
-  const updateRegion = (id: string, value: string, sido?: string, sigungu?: string) =>
-    setRows((prev) => prev.map((r) => (r.id === id ? { ...r, region: value, sido, sigungu } : r)));
+  const deleteSelected = () =>
+    setRows((prev) => prev.filter((r) => !r.selected));
+  const updateRegion = (
+    id: string,
+    value: string,
+    sido?: string,
+    sigungu?: string
+  ) =>
+    setRows((prev) =>
+      prev.map((r) =>
+        r.id === id ? { ...r, region: value, sido, sigungu } : r
+      )
+    );
   const toggleHandled = (id: string) =>
-    setRows((prev) => prev.map((r) => (r.id === id ? { ...r, handled: !r.handled } : r)));
+    setRows((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, handled: !r.handled } : r))
+    );
   const updatePrice = (id: string, col: string, value: string) =>
-    setRows((prev) => prev.map((r) => (r.id === id ? { ...r, prices: { ...r.prices, [col]: value } } : r)));
+    setRows((prev) =>
+      prev.map((r) =>
+        r.id === id ? { ...r, prices: { ...r.prices, [col]: value } } : r
+      )
+    );
 
   const header = useMemo(() => ["", "지역", ...columns], []);
 
   const handleSave = () => {
-    const target = rows.some((r) => r.selected) ? rows.filter((r) => r.selected) : rows;
+    const target = rows.some((r) => r.selected)
+      ? rows.filter((r) => r.selected)
+      : rows;
     const payload = target.map((r) => {
       const prices: { [key: string]: number } = {};
       Object.entries(r.prices).forEach(([k, v]) => {
@@ -115,7 +151,21 @@ export default function DeliveryRegionPopup({ onClose }: Props) {
   };
 
   return (
-    <div className="absolute right-0 mt-2 w-[calc(100vw-3rem)] max-w-[1100px] bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+    // <div className="absolute right-0 mt-2 w-[calc(100vw-3rem)] max-w-[1100px] bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+    <div
+      className="
+    fixed
+    top-20
+    left-1/2
+    -translate-x-1/2
+    w-[calc(100vw-3rem)]
+    max-w-[1100px]
+    bg-white
+    rounded-lg
+    shadow-lg
+    border
+  "
+    >
       <div className="flex items-center justify-between p-2 border-b">
         <div className="flex items-center gap-1">
           <div className="text-base">📍</div>
@@ -123,7 +173,12 @@ export default function DeliveryRegionPopup({ onClose }: Props) {
         </div>
         <div className="flex items-center gap-1">
           <div className="text-xs text-gray-500">{now}</div>
-          <button onClick={onClose} className="text-xs px-2 py-1 border rounded">닫기</button>
+          <button
+            onClick={onClose}
+            className="text-xs px-2 py-1 border rounded"
+          >
+            닫기
+          </button>
         </div>
       </div>
 
@@ -134,9 +189,12 @@ export default function DeliveryRegionPopup({ onClose }: Props) {
               <thead className="bg-gray-50 sticky top-0 z-10">
                 <tr>
                   {header.map((h, idx) => (
-                    <th key={String(h) + idx} className={`p-1 text-left text-xs font-medium text-gray-600 border-b ${
+                    <th
+                      key={String(h) + idx}
+                      className={`p-1 text-left text-xs font-medium text-gray-600 border-b ${
                         idx === 0 ? "w-6" : idx === 1 ? "w-28" : "w-12"
-                      }`}>
+                      }`}
+                    >
                       {h}
                     </th>
                   ))}
@@ -146,7 +204,11 @@ export default function DeliveryRegionPopup({ onClose }: Props) {
                 {rows.map((r) => (
                   <tr key={r.id} className="border-b last:border-0">
                     <td className="p-2 align-top w-6">
-                      <input type="checkbox" checked={!!r.selected} onChange={() => toggleSelect(r.id)} />
+                      <input
+                        type="checkbox"
+                        checked={!!r.selected}
+                        onChange={() => toggleSelect(r.id)}
+                      />
                     </td>
                     <td className="p-1 align-top w-28">
                       <div className="flex items-center gap-1">
@@ -157,6 +219,8 @@ export default function DeliveryRegionPopup({ onClose }: Props) {
                           className="border rounded px-2 py-1 text-xs w-20"
                         />
                         <button
+                          type="button"
+                          onMouseDown={(e) => e.stopPropagation()}
                           onClick={() => {
                             setActiveRowId(r.id);
                             setIsOpenRegionModal(true);
@@ -165,8 +229,13 @@ export default function DeliveryRegionPopup({ onClose }: Props) {
                         >
                           선택
                         </button>
+
                         <label className="text-xs text-gray-400 flex items-center gap-1">
-                          <input type="checkbox" checked={!r.handled} onChange={() => toggleHandled(r.id)} />
+                          <input
+                            type="checkbox"
+                            checked={!r.handled}
+                            onChange={() => toggleHandled(r.id)}
+                          />
                           <span className="text-xs">미취급</span>
                         </label>
                       </div>
@@ -187,7 +256,9 @@ export default function DeliveryRegionPopup({ onClose }: Props) {
                             placeholder="0"
                           />
                         ) : (
-                          <div className="text-xs text-gray-400 italic">미취급</div>
+                          <div className="text-xs text-gray-400 italic">
+                            미취급
+                          </div>
                         )}
                       </td>
                     ))}
@@ -200,13 +271,22 @@ export default function DeliveryRegionPopup({ onClose }: Props) {
       </div>
 
       <div className="flex items-center justify-end gap-2 p-2 border-t">
-        <button onClick={addRow} className="px-2 py-1 bg-primary text-white rounded text-xs">
+        <button
+          onClick={addRow}
+          className="px-2 py-1 bg-primary text-white rounded text-xs"
+        >
           지역 추가
         </button>
-        <button onClick={deleteSelected} className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs">
+        <button
+          onClick={deleteSelected}
+          className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs"
+        >
           선택 삭제
         </button>
-        <button onClick={handleSave} className="px-2 py-1 bg-green-600 text-white rounded text-xs">
+        <button
+          onClick={handleSave}
+          className="px-2 py-1 bg-green-600 text-white rounded text-xs"
+        >
           저장
         </button>
       </div>
@@ -217,9 +297,7 @@ export default function DeliveryRegionPopup({ onClose }: Props) {
         title="지역 추가"
         hasFooter={false}
         onCancel={() => {
-          setIsOpenRegionModal(false);
-          setActiveRowId(null);
-          setPendingSido(null);
+          closeRegionModal();
         }}
         size="lg"
       >
