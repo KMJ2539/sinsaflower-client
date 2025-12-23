@@ -98,9 +98,45 @@ async function saveRegionsAndPrices(payload: MemberRegionPriceRequest[]) {
     data: payload,
   });
 
-  if (!res.ok) {
-    throw new Error("저장 실패");
+  if (res.code !== 200) {
+    throw new Error(res.message || "조회 실패");
   }
+
+  return res;
+}
+
+async function fetchRegionsAndPrices(): Promise<MemberRegionPriceRequest[]> {
+  const res = await clientRequest({
+    url: "/api/members/me/regions-prices",
+    method: "GET",
+  });
+  console.log("POST response =", res);
+  // if (!res.success) {
+  //   throw new Error("조회 실패");
+  // }
+
+  return res.data;
+}
+
+function mapApiDataToRows(data: MemberRegionPriceRequest[]): RegionRow[] {
+  return data.map((r) => {
+    const prices: PriceMap = {};
+
+    columns.forEach((c) => {
+      const found = r.prices.find((p) => p.categoryName === c);
+      prices[c] = found && found.isAvailable ? String(found.price) : "";
+    });
+
+    return {
+      id: `${r.sido}-${r.sigungu}`,
+      region: `${r.sido} ${r.sigungu}`,
+      sido: r.sido,
+      sigungu: r.sigungu,
+      handled: r.handled,
+      prices,
+      selected: false,
+    };
+  });
 }
 
 export default function DeliveryRegionPopup({ onClose, modalOpenRef }: Props) {
@@ -116,6 +152,23 @@ export default function DeliveryRegionPopup({ onClose, modalOpenRef }: Props) {
 
   useEffect(() => {
     modalOpenRef.current = true;
+
+    const load = async () => {
+      try {
+        const data = await fetchRegionsAndPrices();
+
+        if (data.length > 0) {
+          setRows(mapApiDataToRows(data));
+        } else {
+          setRows([makeEmptyRow()]);
+        }
+      } catch (e) {
+        console.error(e);
+        setRows([makeEmptyRow()]);
+      }
+    };
+
+    load();
 
     return () => {
       modalOpenRef.current = false;
@@ -134,7 +187,6 @@ export default function DeliveryRegionPopup({ onClose, modalOpenRef }: Props) {
   };
 
   const addRow = () => {
-    cd;
     const newRow = makeEmptyRow();
     setRows((prev) => [...prev, newRow]);
     setActiveRowId(newRow.id);
@@ -180,10 +232,11 @@ export default function DeliveryRegionPopup({ onClose, modalOpenRef }: Props) {
 
     try {
       setSaving(true);
-      await saveRegionsAndPrices(payload);
-      alert("저장되었습니다.");
+      const res = await saveRegionsAndPrices(payload);
+      alert(res.message || "저장되었습니다.");
       onClose(); // 팝업 닫기
     } catch (e) {
+      console.error("저장 중 오류 {}", e);
       alert("저장 중 오류가 발생했습니다.");
     } finally {
       setSaving(false);
