@@ -27,6 +27,9 @@ const OrderForm = ({
   const { register, handleSubmit, setValue, watch, control, getValues } =
     useForm<OrderFormValue>({
       defaultValues: {
+        orderType: "",
+        autoSido: "",
+        autoSigungu: "",
         originPrice: 0,
         price: 0,
         payment: 0,
@@ -86,6 +89,8 @@ const OrderForm = ({
         <tbody>
           <BasicInfoFields
             register={register}
+            watch={watch}
+            setValue={setValue}
             disabled={isViewMode}
             onOpenMemberSearch={() => setIsMemberSearchOpen(true)}
           />

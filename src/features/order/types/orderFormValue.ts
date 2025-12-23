@@ -1,9 +1,14 @@
 export type OrderFormValue = {
   specialNote?: string;
+  // 주문 유형: 회원 선택 발주 | 자동 배정 발주
+  orderType?: "member" | "auto" | "";
   region: string;
   shopName: string;
   phone: string;
   receiverShopId?: string;
+  // 자동 배정 발주 시 선택하는 지역
+  autoSido?: string;
+  autoSigungu?: string;
   productName: string;
   productDetail?: string;
   quantity: number;
