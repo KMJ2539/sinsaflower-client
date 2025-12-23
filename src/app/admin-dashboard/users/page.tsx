@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import { clientRequest } from "@/shared/lib/http/client";
 
 type UserStatus = "ACTIVE" | "SUSPENDED" | "DORMANT";
 type UserRole = "USER" | "ADMIN";
@@ -13,7 +14,6 @@ type AdminUser = {
   email: string;
   phone: string;
   region: string;
-  businessNumber?: string;
   role: UserRole;
   status: UserStatus;
   createdAt: string;
@@ -21,61 +21,56 @@ type AdminUser = {
   address?: string;
   bizCertImageUrl?: string;
   memo?: string;
+  mobile?: string;
+  nickname?: string;
+  name?: string;
+
+  businessProfile?: {
+    approvalStatus?: string;
+    businessNumber?: string;
+    corpName?: string;
+    ceoName?: string;
+    businessType?: string;
+    businessItem?: string;
+  };
+
+  officeAddress?: {
+    sido?: string;
+    sigungu?: string;
+    detail?: string;
+    zipcode?: string;
+  };
 };
 
 export default function AdminUsersPage() {
-  const users = useMemo<AdminUser[]>(
-    () => [
-      {
-        id: "U-101",
-        loginId: "chapel",
-        shopName: "채플꽃화",
-        ownerName: "김채플",
-        email: "chapel@example.com",
-        phone: "010-1234-5678",
-        region: "서울 강남구",
-        businessNumber: "123-45-67890",
-        role: "USER",
-        status: "ACTIVE",
-        createdAt: "2024-01-08",
-        lastLogin: "2025-12-18 09:01",
-        address: "서울 강남구 테헤란로 123",
-        bizCertImageUrl: "/images/sample-bizcert.png",
-        memo: "프리미엄 회원 예정",
-      },
-      {
-        id: "U-102",
-        loginId: "aloe",
-        shopName: "앨로플라워",
-        ownerName: "이앨로",
-        email: "aloe@example.com",
-        phone: "010-2222-3333",
-        region: "부산 해운대구",
-        businessNumber: "210-33-99887",
-        role: "USER",
-        status: "SUSPENDED",
-        createdAt: "2024-03-14",
-        lastLogin: "2025-12-17 22:11",
-        address: "부산 해운대구 센텀서로 45",
-        bizCertImageUrl: "/images/sample-bizcert.png",
-      },
-      {
-        id: "U-103",
-        loginId: "ruby",
-        shopName: "루비플라워",
-        ownerName: "박루비",
-        email: "ruby@example.com",
-        phone: "010-9876-5432",
-        region: "대전 유성구",
-        businessNumber: "119-77-66554",
-        role: "USER",
-        status: "ACTIVE",
-        createdAt: "2024-05-22",
-        address: "대전 유성구 대학로 23",
-      },
-    ],
-    []
-  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await clientRequest<{
+          code: number;
+          message: string;
+          data: {
+            content: AdminUser[];
+          };
+          timestamp: string;
+        }>({
+          method: "GET",
+          url: "/api/admin/members/all",
+        });
+        console.log("users isArray:", Array.isArray(res.data.content));
+        console.log("first user:", res.data.content?.[0]);
+        setUsers(res.data.content); // ⭐ 핵심
+      } catch (err) {
+        setError("데이터 로드 실패");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUsers();
+  }, []);
 
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<AdminUser | null>(null);
@@ -88,14 +83,20 @@ export default function AdminUsersPage() {
       ) as Record<string, { status: UserStatus; memo: string }>,
     [users]
   );
-  const [rowStates, setRowStates] = useState<Record<string, { status: UserStatus; memo: string }>>(
-    initialRowStates
-  );
+  const [rowStates, setRowStates] =
+    useState<Record<string, { status: UserStatus; memo: string }>>(
+      initialRowStates
+    );
   const initialSavedMemo = useMemo(
-    () => Object.fromEntries(users.map((u) => [u.id, u.memo || ""])) as Record<string, string>,
+    () =>
+      Object.fromEntries(users.map((u) => [u.id, u.memo || ""])) as Record<
+        string,
+        string
+      >,
     [users]
   );
-  const [savedMemo, setSavedMemo] = useState<Record<string, string>>(initialSavedMemo);
+  const [savedMemo, setSavedMemo] =
+    useState<Record<string, string>>(initialSavedMemo);
 
   // Tabs: 회원정보 / 내역정보(히스토리)
   const [activeTab, setActiveTab] = useState<"info" | "history">("info");
@@ -116,7 +117,9 @@ export default function AdminUsersPage() {
       <button
         type="button"
         className={`leading-none text-[10px] px-1 py-0.5 rounded ${
-          active && dir === "asc" ? "bg-gray-900 text-white" : "text-gray-500 hover:text-gray-700"
+          active && dir === "asc"
+            ? "bg-gray-900 text-white"
+            : "text-gray-500 hover:text-gray-700"
         }`}
         title="오름차순"
         onClick={(e) => {
@@ -130,7 +133,9 @@ export default function AdminUsersPage() {
       <button
         type="button"
         className={`leading-none text-[10px] px-1 py-0.5 rounded ${
-          active && dir === "desc" ? "bg-gray-900 text-white" : "text-gray-500 hover:text-gray-700"
+          active && dir === "desc"
+            ? "bg-gray-900 text-white"
+            : "text-gray-500 hover:text-gray-700"
         }`}
         title="내림차순"
         onClick={(e) => {
@@ -144,33 +149,61 @@ export default function AdminUsersPage() {
     </span>
   );
 
-  type HistoryItemBase = { loginId: string; shopName: string; phone: string; date: string };
+  type HistoryItemBase = {
+    loginId: string;
+    shopName: string;
+    phone: string;
+    date: string;
+  };
   type HistoryItem = HistoryItemBase & { status: UserStatus };
   const baseHistory = useMemo<HistoryItemBase[]>(
     () => [
-      { loginId: "chapel", shopName: "채플꽃화", phone: "010-1234-5678", date: "2025-12-20" },
-      { loginId: "aloe", shopName: "앨로플라워", phone: "010-2222-3333", date: "2025-12-18" },
-      { loginId: "ruby", shopName: "루비플라워", phone: "010-9876-5432", date: "2025-12-17" },
-      { loginId: "chapel", shopName: "채플꽃화", phone: "010-1234-5678", date: "2025-12-15" },
+      {
+        loginId: "chapel",
+        shopName: "채플꽃화",
+        phone: "010-1234-5678",
+        date: "2025-12-20",
+      },
+      {
+        loginId: "aloe",
+        shopName: "앨로플라워",
+        phone: "010-2222-3333",
+        date: "2025-12-18",
+      },
+      {
+        loginId: "ruby",
+        shopName: "루비플라워",
+        phone: "010-9876-5432",
+        date: "2025-12-17",
+      },
+      {
+        loginId: "chapel",
+        shopName: "채플꽃화",
+        phone: "010-1234-5678",
+        date: "2025-12-15",
+      },
     ],
     []
   );
-  const userStatusByLogin = useMemo(
-    () => {
-      const map: Record<string, UserStatus> = {};
-      for (const u of users) {
-        const effective = rowStates[u.id]?.status ?? u.status;
-        map[u.loginId] = effective;
-      }
-      return map;
-    },
-    [users, rowStates]
-  );
+  const userStatusByLogin = useMemo(() => {
+    const map: Record<string, UserStatus> = {};
+    for (const u of users) {
+      const effective = rowStates[u.id]?.status ?? u.status;
+      map[u.loginId] = effective;
+    }
+    return map;
+  }, [users, rowStates]);
   const historyItems = useMemo<HistoryItem[]>(
-    () => baseHistory.map((h) => ({ ...h, status: userStatusByLogin[h.loginId] ?? "ACTIVE" })),
+    () =>
+      baseHistory.map((h) => ({
+        ...h,
+        status: userStatusByLogin[h.loginId] ?? "ACTIVE",
+      })),
     [baseHistory, userStatusByLogin]
   );
-  const [historySortBy, setHistorySortBy] = useState<"loginId" | "shopName" | "date">("date");
+  const [historySortBy, setHistorySortBy] = useState<
+    "loginId" | "shopName" | "date"
+  >("date");
   const [historySortDir, setHistorySortDir] = useState<"asc" | "desc">("desc");
   const toggleHistorySort = (key: "loginId" | "shopName" | "date") => {
     if (historySortBy === key) {
@@ -182,16 +215,19 @@ export default function AdminUsersPage() {
   };
   const filteredHistory = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const base = historyItems.filter((h) =>
-      !q ||
-      h.shopName.toLowerCase().includes(q) ||
-      h.loginId.toLowerCase().includes(q) ||
-      h.phone.includes(q)
+    const base = historyItems.filter(
+      (h) =>
+        !q ||
+        h.shopName.toLowerCase().includes(q) ||
+        h.loginId.toLowerCase().includes(q) ||
+        h.phone.includes(q)
     );
     const dir = historySortDir === "asc" ? 1 : -1;
     return [...base].sort((a, b) => {
-      if (historySortBy === "loginId") return a.loginId.localeCompare(b.loginId) * dir;
-      if (historySortBy === "shopName") return a.shopName.localeCompare(b.shopName, "ko") * dir;
+      if (historySortBy === "loginId")
+        return a.loginId.localeCompare(b.loginId) * dir;
+      if (historySortBy === "shopName")
+        return a.shopName.localeCompare(b.shopName, "ko") * dir;
       return (new Date(a.date).getTime() - new Date(b.date).getTime()) * dir;
     });
   }, [historyItems, historySortBy, historySortDir, query]);
@@ -201,8 +237,8 @@ export default function AdminUsersPage() {
     const f = users.filter((u) => {
       if (!q) return true;
       return (
-        u.shopName.toLowerCase().includes(q) ||
-        u.ownerName.toLowerCase().includes(q) ||
+        u.businessProfile?.corpName?.toLowerCase().includes(q) ||
+        u.businessProfile?.ceoName?.toLowerCase().includes(q) ||
         u.loginId.toLowerCase().includes(q) ||
         u.email.toLowerCase().includes(q) ||
         u.phone.includes(q) ||
@@ -220,7 +256,8 @@ export default function AdminUsersPage() {
         return (da - db) * dir;
       }
       // status sort: ACTIVE(0) -> SUSPENDED(1) -> DORMANT(2) for asc
-      const toOrder = (s: UserStatus) => (s === "ACTIVE" ? 0 : s === "SUSPENDED" ? 1 : 2);
+      const toOrder = (s: UserStatus) =>
+        s === "ACTIVE" ? 0 : s === "SUSPENDED" ? 1 : 2;
       const sa = toOrder(rowStates[a.id]?.status || a.status);
       const sb = toOrder(rowStates[b.id]?.status || b.status);
       return (sa - sb) * dir;
@@ -242,7 +279,9 @@ export default function AdminUsersPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">회원 리스트</h1>
-          <p className="text-sm text-gray-500 mt-1">회원 정보를 검색하고 행을 클릭하면 상세정보가 표시됩니다.</p>
+          <p className="text-sm text-gray-500 mt-1">
+            회원 정보를 검색하고 행을 클릭하면 상세정보가 표시됩니다.
+          </p>
         </div>
       </div>
 
@@ -255,7 +294,9 @@ export default function AdminUsersPage() {
           className="flex-1 rounded-lg border p-3 text-sm focus:ring-2 focus:ring-gray-900 focus:outline-none"
         />
         <div className="text-xs text-gray-500">
-          {activeTab === "info" ? `총 ${filtered.length}명` : `총 ${filteredHistory.length}건`}
+          {activeTab === "info"
+            ? `총 ${filtered.length}명`
+            : `총 ${filteredHistory.length}건`}
         </div>
       </div>
 
@@ -263,7 +304,9 @@ export default function AdminUsersPage() {
       <div className="mb-4 flex items-center gap-2">
         <button
           className={`px-3 py-2 rounded-lg text-sm font-medium border ${
-            activeTab === "info" ? "bg-gray-900 text-white border-gray-900" : "bg-white text-gray-700"
+            activeTab === "info"
+              ? "bg-gray-900 text-white border-gray-900"
+              : "bg-white text-gray-700"
           }`}
           onClick={() => setActiveTab("info")}
         >
@@ -271,7 +314,9 @@ export default function AdminUsersPage() {
         </button>
         <button
           className={`px-3 py-2 rounded-lg text-sm font-medium border ${
-            activeTab === "history" ? "bg-gray-900 text-white border-gray-900" : "bg-white text-gray-700"
+            activeTab === "history"
+              ? "bg-gray-900 text-white border-gray-900"
+              : "bg-white text-gray-700"
           }`}
           onClick={() => setActiveTab("history")}
         >
@@ -281,125 +326,160 @@ export default function AdminUsersPage() {
 
       <div className="relative">
         {activeTab === "info" ? (
-        <div className="rounded-xl bg-white shadow border overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead>
-              <tr className="text-left text-gray-500">
-                <th className="px-5 py-3">회원ID</th>
-                <th className="px-5 py-3">상호명</th>
-                <th className="px-5 py-3">대표자</th>
-                <th className="px-5 py-3">연락처</th>
-                <th className="px-5 py-3">지역</th>
-                <th className="px-5 py-3 select-none">
-                  <span className="inline-flex items-center">
-                    가입일
-                    <SortButtons
-                      active={sortBy === "createdAt"}
-                      dir={sortDir}
-                      onAsc={() => {
-                        setSortBy("createdAt");
-                        setSortDir("asc");
-                      }}
-                      onDesc={() => {
-                        setSortBy("createdAt");
-                        setSortDir("desc");
-                      }}
-                    />
-                  </span>
-                </th>
-                <th className="px-5 py-3 select-none">
-                  <span className="inline-flex items-center">
-                    상태
-                    <SortButtons
-                      active={sortBy === "status"}
-                      dir={sortDir}
-                      onAsc={() => {
-                        setSortBy("status");
-                        setSortDir("asc");
-                      }}
-                      onDesc={() => {
-                        setSortBy("status");
-                        setSortDir("desc");
-                      }}
-                    />
-                  </span>
-                </th>
-                <th className="px-5 py-3">메모(사유)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((u) => (
-                <tr
-                  key={u.id}
-                  className="border-t hover:bg-gray-50 cursor-pointer"
-                  onClick={() => setSelected(u)}
-                >
-                  <td className="px-5 py-3 font-mono text-gray-800">{u.loginId}</td>
-                  <td className="px-5 py-3 font-medium text-gray-900">{u.shopName}</td>
-                  <td className="px-5 py-3">{u.ownerName}</td>
-                  <td className="px-5 py-3">{u.phone}</td>
-                  <td className="px-5 py-3">{u.region}</td>
-                  <td className="px-5 py-3 text-gray-500">{u.createdAt}</td>
-                  <td className="px-5 py-3" onClick={(e) => e.stopPropagation()}>
-                    <select
-                      value={rowStates[u.id]?.status || u.status}
-                      onChange={(e) => {
-                        const next = e.target.value as UserStatus;
-                        setRowStates((prev) => {
-                          const current = prev[u.id] || { status: u.status, memo: u.memo || "" };
-                          const nextMemo =
-                            next === "DORMANT" && !current.memo ? "장기 미사용 고객" : current.memo;
-                          return {
-                            ...prev,
-                            [u.id]: { status: next, memo: nextMemo },
-                          };
-                        });
-                      }}
-                      className="rounded-lg border px-2 py-1 text-xs bg-white"
-                    >
-                      <option value="ACTIVE">ACTIVE</option>
-                      <option value="SUSPENDED">SUSPENDED</option>
-                      <option value="DORMANT">DORMANT</option>
-                    </select>
-                  </td>
-                  <td className="px-5 py-3" onClick={(e) => e.stopPropagation()}>
-                    {rowStates[u.id]?.status === "SUSPENDED" || rowStates[u.id]?.status === "DORMANT" ? (
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          value={rowStates[u.id]?.memo || ""}
-                          onChange={(e) =>
-                            setRowStates((prev) => ({
-                              ...prev,
-                              [u.id]: { status: prev[u.id].status, memo: e.target.value },
-                            }))
-                          }
-                          placeholder={rowStates[u.id]?.status === "DORMANT" ? "장기 미사용 고객" : "거부/정지 사유 입력"}
-                          className="w-full rounded-lg border p-2 text-xs"
-                        />
-                        <button
-                          className="px-2 py-1 rounded bg-gray-900 text-white text-xs hover:bg-gray-700"
-                          title="메모 저장"
-                          onClick={() => {
-                            setSavedMemo((prev) => ({ ...prev, [u.id]: rowStates[u.id]?.memo || "" }));
-                            console.log("SAVE MEMO", u.id, rowStates[u.id]?.memo || "");
-                          }}
-                        >
-                          저장
-                        </button>
-                        {savedMemo[u.id] === (rowStates[u.id]?.memo || "") && (
-                          <span className="text-[10px] text-gray-500">저장됨</span>
-                        )}
-                      </div>
-                    ) : (
-                      <span className="text-xs text-gray-500">{rowStates[u.id]?.memo || u.memo || "-"}</span>
-                    )}
-                  </td>
+          <div className="rounded-xl bg-white shadow border overflow-x-auto">
+            <table className="min-w-full text-sm">
+              <thead>
+                <tr className="text-left text-gray-500">
+                  <th className="px-5 py-3">회원ID</th>
+                  <th className="px-5 py-3">상호명</th>
+                  <th className="px-5 py-3">대표자</th>
+                  <th className="px-5 py-3">연락처</th>
+                  <th className="px-5 py-3">지역</th>
+                  <th className="px-5 py-3 select-none">
+                    <span className="inline-flex items-center">
+                      가입일
+                      <SortButtons
+                        active={sortBy === "createdAt"}
+                        dir={sortDir}
+                        onAsc={() => {
+                          setSortBy("createdAt");
+                          setSortDir("asc");
+                        }}
+                        onDesc={() => {
+                          setSortBy("createdAt");
+                          setSortDir("desc");
+                        }}
+                      />
+                    </span>
+                  </th>
+                  <th className="px-5 py-3 select-none">
+                    <span className="inline-flex items-center">
+                      상태
+                      <SortButtons
+                        active={sortBy === "status"}
+                        dir={sortDir}
+                        onAsc={() => {
+                          setSortBy("status");
+                          setSortDir("asc");
+                        }}
+                        onDesc={() => {
+                          setSortBy("status");
+                          setSortDir("desc");
+                        }}
+                      />
+                    </span>
+                  </th>
+                  <th className="px-5 py-3">메모(사유)</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filtered.map((u) => (
+                  <tr
+                    key={u.id}
+                    className="border-t hover:bg-gray-50 cursor-pointer"
+                    onClick={() => setSelected(u)}
+                  >
+                    <td className="px-5 py-3 font-mono text-gray-800">
+                      {u.loginId}
+                    </td>
+                    <td className="px-5 py-3 font-medium text-gray-900">
+                      {u.businessProfile?.corpName}
+                    </td>
+                    <td className="px-5 py-3">{u.businessProfile?.ceoName}</td>
+                    <td className="px-5 py-3">{u.mobile}</td>
+                    <td className="px-5 py-3">{u.region}</td>
+                    <td className="px-5 py-3 text-gray-500">{u.createdAt}</td>
+                    <td
+                      className="px-5 py-3"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <select
+                        value={rowStates[u.id]?.status || u.status}
+                        onChange={(e) => {
+                          const next = e.target.value as UserStatus;
+                          setRowStates((prev) => {
+                            const current = prev[u.id] || {
+                              status: u.status,
+                              memo: u.memo || "",
+                            };
+                            const nextMemo =
+                              next === "DORMANT" && !current.memo
+                                ? "장기 미사용 고객"
+                                : current.memo;
+                            return {
+                              ...prev,
+                              [u.id]: { status: next, memo: nextMemo },
+                            };
+                          });
+                        }}
+                        className="rounded-lg border px-2 py-1 text-xs bg-white"
+                      >
+                        <option value="ACTIVE">ACTIVE</option>
+                        <option value="SUSPENDED">SUSPENDED</option>
+                        <option value="DORMANT">DORMANT</option>
+                      </select>
+                    </td>
+                    <td
+                      className="px-5 py-3"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {rowStates[u.id]?.status === "SUSPENDED" ||
+                      rowStates[u.id]?.status === "DORMANT" ? (
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={rowStates[u.id]?.memo || ""}
+                            onChange={(e) =>
+                              setRowStates((prev) => ({
+                                ...prev,
+                                [u.id]: {
+                                  status: prev[u.id].status,
+                                  memo: e.target.value,
+                                },
+                              }))
+                            }
+                            placeholder={
+                              rowStates[u.id]?.status === "DORMANT"
+                                ? "장기 미사용 고객"
+                                : "거부/정지 사유 입력"
+                            }
+                            className="w-full rounded-lg border p-2 text-xs"
+                          />
+                          <button
+                            className="px-2 py-1 rounded bg-gray-900 text-white text-xs hover:bg-gray-700"
+                            title="메모 저장"
+                            onClick={() => {
+                              setSavedMemo((prev) => ({
+                                ...prev,
+                                [u.id]: rowStates[u.id]?.memo || "",
+                              }));
+                              console.log(
+                                "SAVE MEMO",
+                                u.id,
+                                rowStates[u.id]?.memo || ""
+                              );
+                            }}
+                          >
+                            저장
+                          </button>
+                          {savedMemo[u.id] ===
+                            (rowStates[u.id]?.memo || "") && (
+                            <span className="text-[10px] text-gray-500">
+                              저장됨
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-gray-500">
+                          {rowStates[u.id]?.memo || u.memo || "-"}
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
           <div className="rounded-xl bg-white shadow border overflow-x-auto">
             <table className="min-w-full text-sm">
@@ -463,8 +543,12 @@ export default function AdminUsersPage() {
               <tbody>
                 {filteredHistory.map((h, idx) => (
                   <tr key={`${h.loginId}-${idx}`} className="border-t">
-                    <td className="px-5 py-3 font-mono text-gray-800">{h.loginId}</td>
-                    <td className="px-5 py-3 font-medium text-gray-900">{h.shopName}</td>
+                    <td className="px-5 py-3 font-mono text-gray-800">
+                      {h.loginId}
+                    </td>
+                    <td className="px-5 py-3 font-medium text-gray-900">
+                      {h.shopName}
+                    </td>
                     <td className="px-5 py-3">{h.phone}</td>
                     <td className="px-5 py-3">
                       <span
@@ -498,8 +582,13 @@ export default function AdminUsersPage() {
             <div className="absolute right-0 top-0 h-full w-full max-w-lg bg-white shadow-xl border-l flex flex-col">
               <div className="px-6 py-4 border-b flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">회원 상세</h3>
-                  <p className="text-xs text-gray-500">{selected.shopName} · {selected.ownerName}</p>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    회원 상세
+                  </h3>
+                  <p className="text-xs text-gray-500">
+                    {selected.businessProfile?.corpName} ·{" "}
+                    {selected.businessProfile?.ceoName}
+                  </p>
                 </div>
                 <button
                   onClick={() => setSelected(null)}
@@ -525,7 +614,8 @@ export default function AdminUsersPage() {
                       <span
                         className={
                           "inline-flex items-center px-2 py-0.5 text-xs rounded " +
-                          ((rowStates[selected.id]?.status || selected.status) === "ACTIVE"
+                          ((rowStates[selected.id]?.status ||
+                            selected.status) === "ACTIVE"
                             ? "bg-emerald-50 text-emerald-700"
                             : "bg-amber-50 text-amber-700")
                         }
@@ -536,7 +626,9 @@ export default function AdminUsersPage() {
                   </div>
                   <div>
                     <div className="text-xs text-gray-500">가입일</div>
-                    <div className="mt-1 text-gray-700">{selected.createdAt}</div>
+                    <div className="mt-1 text-gray-700">
+                      {selected.createdAt}
+                    </div>
                   </div>
                 </section>
 
@@ -547,7 +639,7 @@ export default function AdminUsersPage() {
                   </div>
                   <div>
                     <div className="text-xs text-gray-500">연락처</div>
-                    <div className="mt-1">{selected.phone}</div>
+                    <div className="mt-1">{selected.mobile}</div>
                   </div>
                   <div className="col-span-2">
                     <div className="text-xs text-gray-500">주소</div>
@@ -562,7 +654,9 @@ export default function AdminUsersPage() {
                   </div>
                   <div>
                     <div className="text-xs text-gray-500">사업자번호</div>
-                    <div className="mt-1">{selected.businessNumber || "-"}</div>
+                    <div className="mt-1">
+                      {selected.businessProfile?.businessNumber || "-"}
+                    </div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-500">최근 로그인</div>
@@ -571,7 +665,9 @@ export default function AdminUsersPage() {
                 </section>
 
                 <section>
-                  <div className="text-xs text-gray-500 mb-2">사업자등록증 이미지</div>
+                  <div className="text-xs text-gray-500 mb-2">
+                    사업자등록증 이미지
+                  </div>
                   <div className="rounded-lg border bg-gray-50 overflow-hidden">
                     {selected.bizCertImageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -581,40 +677,63 @@ export default function AdminUsersPage() {
                         className="w-full h-56 object-contain bg-white"
                       />
                     ) : (
-                      <div className="h-56 flex items-center justify-center text-gray-400 text-sm">이미지 없음</div>
+                      <div className="h-56 flex items-center justify-center text-gray-400 text-sm">
+                        이미지 없음
+                      </div>
                     )}
                   </div>
                 </section>
 
                 <section>
                   <div className="text-xs text-gray-500 mb-1">메모(사유)</div>
-                  { (rowStates[selected.id]?.status || selected.status) === "SUSPENDED" || (rowStates[selected.id]?.status || selected.status) === "DORMANT" ? (
+                  {(rowStates[selected.id]?.status || selected.status) ===
+                    "SUSPENDED" ||
+                  (rowStates[selected.id]?.status || selected.status) ===
+                    "DORMANT" ? (
                     <>
                       <textarea
                         value={rowStates[selected.id]?.memo || ""}
                         onChange={(e) =>
                           setRowStates((prev) => ({
                             ...prev,
-                            [selected.id]: { status: prev[selected.id].status, memo: e.target.value },
+                            [selected.id]: {
+                              status: prev[selected.id].status,
+                              memo: e.target.value,
+                            },
                           }))
                         }
-                        placeholder={ (rowStates[selected.id]?.status || selected.status) === "DORMANT" ? "장기 미사용 고객" : "정지 사유를 입력하세요" }
+                        placeholder={
+                          (rowStates[selected.id]?.status ||
+                            selected.status) === "DORMANT"
+                            ? "장기 미사용 고객"
+                            : "정지 사유를 입력하세요"
+                        }
                         className="w-full h-24 rounded-lg border p-3 text-sm focus:ring-2 focus:ring-gray-900 focus:outline-none"
                       />
                       <div className="mt-2 flex items-center gap-2">
                         <button
                           className="px-3 py-1.5 rounded bg-gray-900 text-white text-xs hover:bg-gray-700"
-                          onClick={() => setSavedMemo((prev) => ({ ...prev, [selected.id]: rowStates[selected.id]?.memo || "" }))}
+                          onClick={() =>
+                            setSavedMemo((prev) => ({
+                              ...prev,
+                              [selected.id]: rowStates[selected.id]?.memo || "",
+                            }))
+                          }
                         >
                           메모 저장
                         </button>
-                        {savedMemo[selected.id] === (rowStates[selected.id]?.memo || "") && (
-                          <span className="text-[11px] text-gray-500">저장됨</span>
+                        {savedMemo[selected.id] ===
+                          (rowStates[selected.id]?.memo || "") && (
+                          <span className="text-[11px] text-gray-500">
+                            저장됨
+                          </span>
                         )}
                       </div>
                     </>
                   ) : (
-                    <div className="text-sm text-gray-700 whitespace-pre-wrap">{rowStates[selected.id]?.memo || selected.memo || "-"}</div>
+                    <div className="text-sm text-gray-700 whitespace-pre-wrap">
+                      {rowStates[selected.id]?.memo || selected.memo || "-"}
+                    </div>
                   )}
                 </section>
               </div>

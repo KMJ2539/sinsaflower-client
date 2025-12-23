@@ -12,7 +12,7 @@ const SideMenu = async () => {
         {userInfo != null ? (
           <div>
             <h2 className="font-bold text-center text-lg text-gray-800 mb-2">
-              {userInfo?.name || userInfo?.username || "다경플라워"} 님
+              {userInfo?.nickname || "다경플라워"} 님
             </h2>
             <p className="text-gray-600 text-center mb-3">
               잔금총액:{" "}

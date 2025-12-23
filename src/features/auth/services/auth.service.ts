@@ -23,7 +23,7 @@ export async function signup(inputs: RegisterFormInputs) {
   if (businessCertFile) formData.append("businessCertFile", businessCertFile);
 
   return clientRequest({
-    url: "/api/auth/signup",
+    url: "/api/members/signup",
     method: "POST",
     data: formData,
     // FormData 사용 시 Content-Type은 axios가 자동으로 설정함
