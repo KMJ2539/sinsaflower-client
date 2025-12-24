@@ -449,17 +449,42 @@ const RegisterForm = ({ prevStep, nextStep }: RegisterFormProps) => {
 
         {/* <div className="border-b-2 border-b-gray-200 border-dashed my-8" /> */}
 
-        <div>
-          {/* 계좌번호 */}
-          <FormInput
-            label="계좌번호"
-            placeholder="계좌번호를 입력하세요 (- 제외)"
-            isRequired={true}
-            error={errors.businessProfile?.accountNumber?.message}
-            {...register("businessProfile.accountNumber", {
-              required: "계좌번호를 입력하세요.",
-            })}
-          ></FormInput>
+        <div className="my-2 tracking-tight">
+          <label className="text-sm">
+            계좌번호<span className="sf-req">*</span>
+          </label>
+          <div className="grid md:grid-cols-3 md:gap-4">
+            <input
+              className={clsx(
+                "w-full border border-input px-3 p-2 my-2 rounded-md",
+                errors.businessProfile?.bankName?.message && "!border-danger !mb-0"
+              )}
+              placeholder="은행"
+              {...register("businessProfile.bankName", {
+                required: "은행을 입력하세요.",
+              })}
+            />
+            <input
+              className={clsx(
+                "w-full border border-input px-3 p-2 my-2 rounded-md",
+                errors.businessProfile?.accountNumber?.message && "!border-danger !mb-0"
+              )}
+              placeholder="계좌번호"
+              {...register("businessProfile.accountNumber", {
+                required: "계좌번호를 입력하세요.",
+              })}
+            />
+            <input
+              className={clsx(
+                "w-full border border-input px-3 p-2 my-2 rounded-md",
+                errors.businessProfile?.accountOwner?.message && "!border-danger !mb-0"
+              )}
+              placeholder="예금주"
+              {...register("businessProfile.accountOwner", {
+                required: "예금주를 입력하세요.",
+              })}
+            />
+          </div>
           <p className="text-sm text-default relative bottom-2 mt-2">
             (대표자와 통장 명의가 다른 경우 입금되지 않습니다.)
           </p>
