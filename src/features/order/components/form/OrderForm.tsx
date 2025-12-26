@@ -112,6 +112,7 @@ const OrderForm = ({
           <DeliveryFields
             register={register}
             watch={watch}
+            setValue={setValue}
             disabled={isViewMode}
           />
           <MessageFields
