@@ -252,14 +252,15 @@ export default function DeliveryFields({
             <span>
               배달장소{!disabled && <span className="sf-req">*</span>}
             </span>
-            <button
-              type="button"
-              className="sf-btn-img--md"
-              onClick={() => !disabled && setShowRegionNotes((v) => !v)}
-              disabled={disabled}
-            >
-              필독사항
-            </button>
+            {!disabled && (
+              <button
+                type="button"
+                className="sf-btn-img--md"
+                onClick={() => setShowRegionNotes((v) => !v)}
+              >
+                필독사항
+              </button>
+            )}
           </div>
         </th>
         <td colSpan={3}>
@@ -269,14 +270,15 @@ export default function DeliveryFields({
               className="border p-0.5 text-xs w-1/2"
               disabled={disabled}
             />
-            <button
-              type="button"
-              className="sf-btn-img--md"
-              onClick={() => !disabled && setIsOpenPlaceSearch(true)}
-              disabled={disabled}
-            >
-              행사장 검색
-            </button>
+            {!disabled && (
+              <button
+                type="button"
+                className="sf-btn-img--md"
+                onClick={() => setIsOpenPlaceSearch(true)}
+              >
+                행사장 검색
+              </button>
+            )}
           </div>
         </td>
       </tr>

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { OrderPurchaseValue } from "../../types/orderPurchaseValue";
 import { OrderFilter } from "../../types/orderFilter";
 import { useEffect, useState } from "react";
+import OrderDetailModal from "../OrderDetailModal";
 import { getOrders } from "../../services/order.service";
 import { useOrderSearch } from "../../context/order-search.context";
 import OrderNumberCell from "./OrderNumberCell";
@@ -148,6 +149,8 @@ const dummyData: OrderPurchaseValue[] = [
 export function OrderPurchaseTable() {
   const { filter, searchSignal } = useOrderSearch();
   const [orders, setOrders] = useState<OrderPurchaseValue[]>(dummyData);
+  const [detailOrderNumber, setDetailOrderNumber] = useState<string | null>(null);
+  const [detailFocus, setDetailFocus] = useState<"consignee" | "top" | null>(null);
 
   // 서비스 붙이고나서 주석풀기
   // useEffect(() => {
@@ -267,13 +270,10 @@ export function OrderPurchaseTable() {
                 <td>
                   <div className="mb-2">
                     <select
-                      className={`w-full text-xs px-2 py-1 rounded border ${
-                        order.deliveryStatus === "배송완료"
-                          ? "bg-gray-100 text-gray-600 cursor-not-allowed"
-                          : "bg-white text-gray-800 border-gray-300 hover:border-primary"
-                      }`}
-                      disabled={order.deliveryStatus === "배송완료"}
+                      className={"w-full text-xs px-2 py-1 rounded border bg-gray-100 text-gray-600 cursor-not-allowed"}
+                      disabled
                       defaultValue={order.deliveryStatus}
+                      title="수주자만 변경 가능합니다"
                     >
                       <option value="미확인">미확인</option>
                       <option value="주문접수">주문접수</option>
@@ -282,7 +282,7 @@ export function OrderPurchaseTable() {
                     </select>
                   </div>
                   <div className="flex gap-1 mb-1 items-center">
-                    <button
+                    <span
                       className={`px-1 py-1 text-xs rounded font-medium transition-all duration-200 ${
                         order.isDelivery
                           ? "bg-green-500 text-white shadow-sm"
@@ -290,8 +290,8 @@ export function OrderPurchaseTable() {
                       }`}
                     >
                       배송
-                    </button>
-                    <button
+                    </span>
+                    <span
                       className={`px-1 py-1 text-xs rounded font-medium transition-all duration-200 ${
                         order.onSite
                           ? "bg-green-500 text-white shadow-sm"
@@ -299,10 +299,14 @@ export function OrderPurchaseTable() {
                       }`}
                     >
                       현장
-                    </button>
-                    <span className="text-gray-600 text-xs">
-                      {order.consignee}
                     </span>
+                    <button
+                      className="text-gray-700 text-xs underline hover:text-primary"
+                      onClick={() => { setDetailOrderNumber(order.orderNumber); setDetailFocus("consignee"); }}
+                      title="주문정보 보기"
+                    >
+                      {order.consignee}
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -310,6 +314,14 @@ export function OrderPurchaseTable() {
           </tbody>
         </table>
       </div>
+      {detailOrderNumber && (
+        <OrderDetailModal
+          isOpen={true}
+          orderNumber={detailOrderNumber}
+          onClose={() => { setDetailOrderNumber(null); setDetailFocus(null); }}
+          focusSection={detailFocus || undefined}
+        />
+      )}
     </>
   );
 }

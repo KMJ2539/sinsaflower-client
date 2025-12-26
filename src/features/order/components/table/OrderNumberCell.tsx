@@ -21,6 +21,10 @@ export default function OrderNumberCell({ orderNumber }: OrderNumberCellProps) {
     setIsReceiptModalOpen(true);
   };
 
+  const handleSearchIconClick = () => {
+    setIsDetailModalOpen(true);
+  };
+
   const handleCloseDetailModal = () => {
     setIsDetailModalOpen(false);
   };
@@ -45,6 +49,14 @@ export default function OrderNumberCell({ orderNumber }: OrderNumberCellProps) {
           height={10}
           className="cursor-pointer m-auto pt-1"
           onClick={handleReceiptIconClick}
+        />
+        <Image
+          src="/icons/magnifier.svg"
+          alt="search"
+          width={10}
+          height={10}
+          className="cursor-pointer m-auto pt-1"
+          onClick={handleSearchIconClick}
         />
       </td>
 

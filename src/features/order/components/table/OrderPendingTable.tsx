@@ -78,6 +78,11 @@ export function OrderPendingTable() {
               <br />
               팩스
             </th>
+            <th className="w-52">
+              배송상태
+              <br />
+              인수자
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -156,6 +161,46 @@ export function OrderPendingTable() {
                   }`}
                 >
                   {order.fax}
+                </div>
+              </td>
+              {/* 배송상태 / 인수자 */}
+              <td>
+                <div className="mb-2">
+                  <select
+                    className={`w-full text-xs px-2 py-1 rounded border ${
+                      order.deliveryStatus === "배송완료"
+                        ? "bg-gray-100 text-gray-600 cursor-not-allowed"
+                        : "bg-white text-gray-800 border-gray-300 hover:border-primary"
+                    }`}
+                    disabled={order.deliveryStatus === "배송완료"}
+                    defaultValue={order.deliveryStatus}
+                  >
+                    <option value="미확인">미확인</option>
+                    <option value="주문접수">주문접수</option>
+                    <option value="배송준비">배송준비</option>
+                    <option value="배송완료">배송완료</option>
+                  </select>
+                </div>
+                <div className="flex gap-1 mb-1 items-center">
+                  <button
+                    className={`px-1 py-1 text-xs rounded font-medium transition-all duration-200 ${
+                      order.isDelivery
+                        ? "bg-green-500 text-white shadow-sm"
+                        : "bg-gray-600 text-white shadow-sm"
+                    }`}
+                  >
+                    배송
+                  </button>
+                  <button
+                    className={`px-1 py-1 text-xs rounded font-medium transition-all duration-200 ${
+                      order.onSite
+                        ? "bg-green-500 text-white shadow-sm"
+                        : "bg-gray-600 text-white shadow-sm"
+                    }`}
+                  >
+                    현장
+                  </button>
+                  <span className="text-gray-600 text-xs">{order.consignee}</span>
                 </div>
               </td>
             </tr>
