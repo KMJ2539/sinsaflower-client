@@ -100,7 +100,11 @@ export default function MessageFields({
           <button
             type="button"
             onClick={() => {
-              if (!disabled) append({ text: "" });
+              if (!disabled) {
+                const nextIndex = fields.length; // 새 필드 인덱스
+                append({ text: "" });
+                setFocusedIndex(nextIndex);
+              }
             }}
             className="sf-btn-img--lg mb-2"
             disabled={disabled}
@@ -120,6 +124,8 @@ export default function MessageFields({
                 {...register(`messages.${index}.text`)}
                 className="border p-0.5 text-xs flex-1"
                 placeholder="경조사어 입력"
+                onFocus={() => setFocusedIndex(index)}
+                onClick={() => setFocusedIndex(index)}
                 disabled={disabled}
               />
               {!disabled && (

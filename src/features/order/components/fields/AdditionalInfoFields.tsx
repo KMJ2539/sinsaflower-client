@@ -5,12 +5,14 @@ interface Props {
   register: UseFormRegister<OrderFormValue>;
   control: Control<OrderFormValue>;
   disabled?: boolean;
+  consigneeRef?: React.Ref<HTMLTableRowElement>;
 }
 
 export default function AdditionalInfoFields({
   register,
   control,
   disabled = false,
+  consigneeRef,
 }: Props) {
   const { fields, append, remove } = useFieldArray({
     control,
@@ -93,7 +95,8 @@ export default function AdditionalInfoFields({
       {/* 인수자 정보 - view 모드에서만 표시 */}
       {disabled && (
         <>
-          <tr>
+          <tr ref={consigneeRef}
+          >
             <th>인수자</th>
             <td>
               <input

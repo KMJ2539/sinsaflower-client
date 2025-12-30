@@ -16,6 +16,7 @@ interface OrderFormProps {
   mode?: "create" | "view";
   initialData?: Partial<OrderFormValue>;
   orderNumber?: string;
+  focusSection?: "consignee" | "top";
 }
 
 function toOrderCreateRequest(form: OrderFormValue) {
@@ -89,8 +90,10 @@ const OrderForm = ({
   mode = "create",
   initialData,
   orderNumber,
+  focusSection,
 }: OrderFormProps) => {
   const isViewMode = mode === "view";
+  const consigneeRowRef = useState<HTMLTableRowElement | null>(null)[0] as unknown as React.MutableRefObject<HTMLTableRowElement | null>;
 
   const { register, handleSubmit, setValue, watch, control, getValues } =
     useForm<OrderFormValue>({
@@ -171,6 +174,17 @@ const OrderForm = ({
       });
   };
 
+  useEffect(() => {
+    if (!isViewMode) return;
+    if (focusSection === "consignee") {
+      // 스크롤이 가능하도록 약간 지연 후 실행
+      setTimeout(() => {
+        const el = consigneeRowRef?.current || document.getElementById("consignee-anchor");
+        el?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 50);
+    }
+  }, [focusSection, isViewMode]);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       {isViewMode && (
@@ -184,7 +198,7 @@ const OrderForm = ({
         </div>
       )}
 
-      <table className="sf-table sf-table--form">
+      <table className={`sf-table sf-table--form ${isViewMode ? "text-[11px]" : ""}`}>
         <tbody>
           <BasicInfoFields
             register={register}
@@ -203,6 +217,7 @@ const OrderForm = ({
           <DeliveryFields
             register={register}
             watch={watch}
+            setValue={setValue}
             disabled={isViewMode}
           />
           <MessageFields
@@ -212,10 +227,18 @@ const OrderForm = ({
             getValues={getValues}
             disabled={isViewMode}
           />
+          {/* focus용 앵커 */}
+          {isViewMode && (
+            <tr>
+              <td colSpan={4}><div id="consignee-anchor" /></td>
+            </tr>
+          )}
+
           <AdditionalInfoFields
             register={register}
             control={control}
             disabled={isViewMode}
+            consigneeRef={consigneeRowRef}
           />
         </tbody>
       </table>

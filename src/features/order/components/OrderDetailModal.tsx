@@ -5,17 +5,20 @@ import Modal from "@/shared/components/ui/Modal";
 import OrderForm from "./form/OrderForm";
 import { OrderFormValue } from "../types/orderFormValue";
 import { getOrderByNumber } from "../services/order.service";
+import OrderInfoView from "./OrderInfoView";
 
 interface OrderDetailModalProps {
   isOpen: boolean;
   orderNumber: string;
   onClose: () => void;
+  focusSection?: "consignee" | "top";
 }
 
 export default function OrderDetailModal({
   isOpen,
   orderNumber,
   onClose,
+  focusSection,
 }: OrderDetailModalProps) {
   const [orderData, setOrderData] = useState<OrderFormValue | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -64,44 +67,47 @@ export default function OrderDetailModal({
     <Modal
       isOpen={isOpen}
       title=""
-      size="xl"
+      size="md"
       hasFooter={true}
-      confirmText="수정"
       cancelText="닫기"
       onCancel={onClose}
-      onConfirm={handleModify}
     >
-      <div className="space-y-6">
+      <div className="space-y-3 max-h-[70vh] overflow-y-auto pr-1">
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         ) : (
           <>
-            {/* OrderForm을 주문정보 조회용으로 사용 */}
-            <OrderForm
-              mode="view"
-              initialData={orderData}
-              orderNumber={orderNumber}
-            />
+            {focusSection === "consignee" ? (
+              <OrderInfoView
+                orderNumber={orderNumber}
+                orderData={orderData}
+                canUpload={false}
+                onClose={onClose}
+                onDeliveryEdit={() => console.log("배송수정")}
+                onDeliveryCancel={() => console.log("배송취소")}
+              />
+            ) : (
+              <OrderForm
+                mode="view"
+                initialData={orderData}
+                orderNumber={orderNumber}
+                focusSection={focusSection}
+              />
+            )}
 
             {/* 하단 버튼들 */}
-            <div className="flex gap-4 justify-center  pb-4 border-gray-200">
+            <div className="flex gap-2 justify-center pb-2">
               <button
                 onClick={handleDeliveryProcess}
-                className="px-5 py-2.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors font-medium text-sm shadow-sm"
+                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors font-medium text-sm shadow-sm"
               >
                 배송처리
               </button>
               <button
-                onClick={handleDeleteOrder}
-                className="px-5 py-2.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors font-medium text-sm shadow-sm"
-              >
-                주문서 삭제
-              </button>
-              <button
                 onClick={handlePrintReceipt}
-                className="px-5 py-2.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors font-medium text-sm shadow-sm"
+                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors font-medium text-sm shadow-sm"
               >
                 인수증 출력
               </button>

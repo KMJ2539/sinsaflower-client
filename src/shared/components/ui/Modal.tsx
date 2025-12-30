@@ -76,6 +76,15 @@ export default function Modal({
             />
           </div>
         )}
+        {onCancel && (
+          <button
+            aria-label="close"
+            onClick={onCancel}
+            className="absolute top-2 right-2 px-2 py-1 text-sm rounded border border-gray-300 hover:bg-gray-100"
+          >
+            X
+          </button>
+        )}
         <h2 className="text-xl font-bold mb-4">{title}</h2>
         <div className="mb-6">{children}</div>
         {hasFooter && (
